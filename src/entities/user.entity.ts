@@ -5,18 +5,21 @@ import {
   OneToMany,
   CreateDateColumn,
   UpdateDateColumn,
+  OneToOne,
+  JoinColumn,
 } from 'typeorm';
 import { Order } from './order.entity';
 import { Review } from './review.entity';
 import { Cart } from './cart.entity';
+import { Role } from 'src/common/enum';
 
 @Entity()
 export class User {
   @PrimaryGeneratedColumn()
   userId: number;
 
-  @Column({ unique: true })
-  username: string;
+  @Column()
+  fullName: string;
 
   @Column()
   password: string;
@@ -30,8 +33,11 @@ export class User {
   @Column()
   address: string;
 
-  @Column()
-  role: string;
+  @Column({ nullable: true })
+  refreshToken: string;
+
+  @Column({ type: 'enum', enum: Role, default: Role.USER })
+  role: Role;
 
   @CreateDateColumn()
   createdAt: Date;
@@ -45,6 +51,7 @@ export class User {
   @OneToMany(() => Review, (review) => review.user)
   reviews: Review[];
 
-  @OneToMany(() => Cart, (cart) => cart.user)
-  carts: Cart[];
+  @OneToOne(() => Cart, (cart) => cart.user)
+  @JoinColumn()
+  carts: Cart;
 }

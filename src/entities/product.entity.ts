@@ -9,8 +9,9 @@ import {
 } from 'typeorm';
 import { Category } from './category.entity';
 import { Review } from './review.entity';
-import { OrderDetails } from './order-details.entity';
+import { OrderDetail } from './order-detail.entity';
 import { CartItem } from './cart-item.entity';
+import { ProductVariant } from './product-variant.entity';
 
 @Entity()
 export class Product {
@@ -29,20 +30,16 @@ export class Product {
   @Column()
   stockQuantity: number;
 
-  @Column()
-  imageUrl: string;
+  @OneToMany(() => ProductVariant, (variant) => variant.product, {
+    cascade: true,
+  })
+  variants: ProductVariant[];
 
   @ManyToOne(() => Category, (category) => category.products)
   category: Category;
 
   @OneToMany(() => Review, (review) => review.product)
   reviews: Review[];
-
-  @OneToMany(() => OrderDetails, (orderDetails) => orderDetails.product)
-  orderDetails: OrderDetails[];
-
-  @OneToMany(() => CartItem, (cartItem) => cartItem.product)
-  cartItems: CartItem[];
 
   @CreateDateColumn()
   createdAt: Date;

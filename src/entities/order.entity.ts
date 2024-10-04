@@ -6,11 +6,13 @@ import {
   OneToMany,
   CreateDateColumn,
   UpdateDateColumn,
+  OneToOne,
 } from 'typeorm';
 import { User } from './user.entity';
-import { OrderDetails } from './order-details.entity';
+import { OrderDetail } from './order-detail.entity';
 import { Payment } from './payment.entity';
 import { Shipping } from './shipping.entity';
+import { PaymentMethod } from 'src/common/enum';
 
 @Entity()
 export class Order {
@@ -29,8 +31,8 @@ export class Order {
   @Column()
   shippingAddress: string;
 
-  @Column()
-  paymentMethod: string;
+  @Column({ type: 'enum', enum: PaymentMethod })
+  paymentMethod: PaymentMethod;
 
   @CreateDateColumn()
   orderDate: Date;
@@ -38,8 +40,8 @@ export class Order {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @OneToMany(() => OrderDetails, (orderDetails) => orderDetails.order)
-  orderDetails: OrderDetails[];
+  @OneToMany(() => OrderDetail, (orderDetails) => orderDetails.order)
+  orderDetails: OrderDetail[];
 
   @OneToOne(() => Payment, (payment) => payment.order)
   payment: Payment;
