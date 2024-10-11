@@ -15,9 +15,6 @@ export class ProductDto {
   @IsNumber()
   price: number;
 
-  @IsNumber()
-  stockQuantity: number;
-
   @IsArray()
   variants: ProductVariantDto[];
 

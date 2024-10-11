@@ -19,18 +19,15 @@ export enum ProductSize {
 }
 
 export enum PaymentMethod {
-  CASH = 'cash',
-  CREDIT_CARD = 'credit card',
-  DEBIT_CARD = 'debit card',
-  PAYPAL = 'paypal',
-  STRIPE = 'stripe',
+  COD = 'cash on delivery',
+  VNPAY = 'vnpay',
 }
 
 export enum OrderStatus {
   PENDING = 'pending',
   PROCESSING = 'processing',
-  SHIPPED = 'shipped',
-  DELIVERED = 'delivered',
+  DELIVERING = 'delivering',
+  COMPLETED = 'completed',
   CANCELLED = 'cancelled',
 }
 

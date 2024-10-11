@@ -12,7 +12,7 @@ import { User } from './user.entity';
 import { OrderDetail } from './order-detail.entity';
 import { Payment } from './payment.entity';
 import { Shipping } from './shipping.entity';
-import { PaymentMethod } from 'src/common/enum';
+import { OrderStatus, PaymentMethod } from 'src/common/enum';
 
 @Entity()
 export class Order {
@@ -22,8 +22,8 @@ export class Order {
   @ManyToOne(() => User, (user) => user.orders)
   user: User;
 
-  @Column()
-  orderStatus: string;
+  @Column({ type: 'enum', enum: OrderStatus })
+  orderStatus: OrderStatus;
 
   @Column('decimal')
   totalPrice: number;
@@ -40,7 +40,9 @@ export class Order {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @OneToMany(() => OrderDetail, (orderDetails) => orderDetails.order)
+  @OneToMany(() => OrderDetail, (orderDetails) => orderDetails.order, {
+    cascade: true,
+  })
   orderDetails: OrderDetail[];
 
   @OneToOne(() => Payment, (payment) => payment.order)

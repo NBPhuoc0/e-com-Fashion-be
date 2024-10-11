@@ -1,4 +1,13 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Query,
+} from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { ProductDto } from './dto/product.dto';
 import { CategoriesService } from './categories.service';
@@ -19,7 +28,10 @@ export class ProductsController {
   ) {}
 
   @Get(':id')
-  async findOne(@Param('id') id: string) {
-    return this.s3ClientService.getPresignedSignedUrl(id);
+  async findOne(
+    @Param('id') id: string,
+    @Query('productId') productId: number,
+  ) {
+    return this.s3ClientService.getPresignedSignedUrl(id, productId);
   }
 }

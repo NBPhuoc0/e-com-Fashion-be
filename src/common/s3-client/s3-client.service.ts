@@ -34,15 +34,16 @@ export class S3ClientService {
     });
   }
 
-  async getPresignedSignedUrl(key: string) {
+  async getPresignedSignedUrl(key: string, productId: number) {
     try {
       const command = new PutObjectCommand({
-        Bucket: this.bucketName,
+        Bucket: this.bucketName + `/products/${productId}`,
         Key: key,
+        ACL: 'public-read',
       });
 
       const url = await getSignedUrl(this.client, command, {
-        expiresIn: 60 * 60 * 24, // 24 hours
+        expiresIn: 60 * 60, // 1 hours
       });
 
       return { url };

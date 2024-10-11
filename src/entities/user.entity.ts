@@ -27,10 +27,10 @@ export class User {
   @Column({ unique: true })
   email: string;
 
-  @Column()
+  @Column({ nullable: true })
   phoneNumber: string;
 
-  @Column()
+  @Column({ nullable: true })
   address: string;
 
   @Column({ nullable: true })
@@ -48,10 +48,10 @@ export class User {
   @OneToMany(() => Order, (order) => order.user)
   orders: Order[];
 
-  @OneToMany(() => Review, (review) => review.user)
+  @OneToMany(() => Review, (review) => review.user, { cascade: true })
   reviews: Review[];
 
-  @OneToOne(() => Cart, (cart) => cart.user)
+  @OneToOne(() => Cart, (cart) => cart.user, { cascade: true })
   @JoinColumn()
   carts: Cart;
 }

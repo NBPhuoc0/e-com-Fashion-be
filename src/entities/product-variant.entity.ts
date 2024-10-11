@@ -8,10 +8,8 @@ import {
   JoinColumn,
 } from 'typeorm';
 import { Product } from './product.entity';
+import { Photo } from './photo.entity';
 import { ProductSize } from 'src/common/enum';
-import { CartItem } from './cart-item.entity';
-import { OrderDetail } from './order-detail.entity';
-import { ProductVariantSizeStock } from './product-variant-size-stock.entity';
 
 @Entity()
 export class ProductVariant {
@@ -21,16 +19,15 @@ export class ProductVariant {
   @Column()
   colorName: string;
 
-  @Column()
-  colorHex: string;
+  @Column({ type: 'enum', enum: ProductSize })
+  size: ProductSize;
 
-  @Column('simple-array')
-  imageUrls: string[];
+  @Column()
+  stockQuantity: number;
 
   @ManyToOne(() => Product, (product) => product.variants)
   product: Product;
 
-  @OneToOne(() => ProductVariantSizeStock, (sizeStock) => sizeStock.variant)
-  @JoinColumn()
-  sizeStocks: ProductVariantSizeStock;
+  @OneToMany(() => Photo, (photo) => photo.productVariant, { cascade: true })
+  photos: Photo[];
 }

@@ -19,7 +19,7 @@ export class Cart {
   @OneToOne(() => User, (user) => user.carts)
   user: User;
 
-  @OneToMany(() => CartItem, (cartItem) => cartItem.cart)
+  @OneToMany(() => CartItem, (cartItem) => cartItem.cart, { cascade: true })
   cartItems: CartItem[];
 
   @CreateDateColumn()
