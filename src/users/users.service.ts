@@ -4,10 +4,6 @@ import { Repository } from 'typeorm';
 import { User } from 'src/entities/user.entity';
 import { Cart } from 'src/entities/cart.entity';
 import { CartItem } from 'src/entities/cart-item.entity';
-import { UpdateCartDto } from './dto/update-cart.dto';
-import { CreateCartItemDto } from './dto/create-cart-item.dto';
-import { UpdateCartItemDto } from './dto/update-cart-item.dto';
-import { ProductVariant } from 'src/entities/product-variant.entity';
 import { signupDto } from 'src/auth/dto/signup.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 
@@ -46,7 +42,10 @@ export class UsersService {
     return this.userRepository.findOne({ where: { email } });
   }
 
-  async updateUser(id: number, updateUserDto: UpdateUserDto): Promise<User> {
+  async updateUser(
+    id: number,
+    updateUserDto: Partial<UpdateUserDto>,
+  ): Promise<User> {
     await this.userRepository.update({ userId: id }, updateUserDto);
     return this.findOneUser(id);
   }

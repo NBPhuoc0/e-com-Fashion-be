@@ -11,7 +11,7 @@ import {
 import { Order } from './order.entity';
 import { Review } from './review.entity';
 import { Cart } from './cart.entity';
-import { Role } from 'src/common/enum';
+import { Role, Gender } from '../common/enum';
 
 @Entity()
 export class User {
@@ -20,6 +20,12 @@ export class User {
 
   @Column()
   fullName: string;
+
+  @Column({ nullable: true })
+  dateOfBirth: Date;
+
+  @Column({ type: 'enum', enum: Gender, nullable: true })
+  gender: Gender;
 
   @Column()
   password: string;

@@ -1,11 +1,8 @@
 import { IsArray, IsDate, IsNumber, IsString } from 'class-validator';
 import { ProductVariantDto } from './product-variant.dto';
-import { ReviewDto } from './review.dto';
+import { ReviewDto } from '../../users/dto/review.dto';
 
 export class ProductDto {
-  @IsNumber()
-  productId: number;
-
   @IsString()
   productName: string;
 
@@ -20,9 +17,6 @@ export class ProductDto {
 
   @IsNumber()
   categoryId: number;
-
-  @IsArray()
-  reviews: ReviewDto[];
 
   @IsDate()
   createdAt: Date;

@@ -3,10 +3,16 @@ export enum Role {
   ADMIN = 'admin',
 }
 
+export enum Gender {
+  MALE = 'Nam',
+  FEMALE = 'Nữ',
+  OTHER = 'Khác',
+}
+
 export enum ShippingStatus {
   PENDING = 'pending',
-  SHIPPED = 'shipped',
-  DELIVERED = 'delivered',
+  DELIVERING = 'delivering',
+  COMPLETED = 'completed',
   CANCELLED = 'cancelled',
 }
 

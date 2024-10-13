@@ -5,10 +5,13 @@ import { ProductVariant } from './product-variant.entity';
 @Entity()
 export class Photo {
   @PrimaryGeneratedColumn()
-  id: number;
+  photoId: number;
 
   @Column()
   imgUrl: string;
+
+  @Column()
+  position: number;
 
   @ManyToOne(() => ProductVariant, (variant) => variant.photos)
   productVariant: ProductVariant;

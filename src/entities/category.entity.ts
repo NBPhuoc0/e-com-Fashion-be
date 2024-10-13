@@ -9,11 +9,12 @@ import {
   TreeParent,
   TreeChildren,
   Tree,
+  JoinColumn,
 } from 'typeorm';
 import { Product } from './product.entity';
 
 @Entity()
-@Tree('nested-set')
+@Tree('materialized-path')
 export class Category {
   @PrimaryGeneratedColumn()
   categoryId: number;
@@ -24,10 +25,10 @@ export class Category {
   @OneToMany(() => Product, (product) => product.category)
   products: Product[];
 
-  @TreeParent()
+  @TreeParent({ onDelete: 'SET NULL' })
   parent: Category;
 
-  @TreeChildren()
+  @TreeChildren({ cascade: true })
   children: Category[];
 
   @CreateDateColumn()

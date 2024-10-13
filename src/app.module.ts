@@ -22,6 +22,7 @@ import { S3ClientModule } from './common/s3-client/s3-client.module';
       password: process.env.DB_PASS,
       database: process.env.DB_NAME,
       autoLoadEntities: true,
+      dropSchema: false, // shouldn't be used in production - may lose data
       synchronize: true, // shouldn't be used in production - may lose data
     }),
     AuthModule,

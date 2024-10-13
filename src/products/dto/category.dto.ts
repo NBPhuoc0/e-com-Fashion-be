@@ -6,26 +6,21 @@ import {
   IsNumber,
 } from 'class-validator';
 import { Type } from 'class-transformer';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class CategoryDto {
-  @IsNumber()
-  categoryId: number;
-
   @IsString()
+  @ApiProperty({
+    example: 'Nam',
+    description: 'The name of the category',
+  })
   categoryName: string;
 
   @IsOptional()
-  @IsArray()
-  @Type(() => CategoryDto)
-  children?: CategoryDto[];
-
-  @IsOptional()
-  @Type(() => CategoryDto)
-  parent?: CategoryDto;
-
-  @IsDate()
-  createdAt: Date;
-
-  @IsDate()
-  updatedAt: Date;
+  @IsNumber()
+  @ApiProperty({
+    example: 1,
+    description: 'The id of the parent category',
+  })
+  parent?: number;
 }

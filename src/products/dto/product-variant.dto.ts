@@ -9,9 +9,6 @@ import {
 import { ProductSize } from 'src/common/enum';
 
 export class ProductVariantDto {
-  @IsNumber()
-  variantId: number;
-
   @IsString()
   colorName: string;
 
@@ -20,7 +17,4 @@ export class ProductVariantDto {
 
   @IsNumber()
   stockQuantity: number;
-
-  @IsNumber()
-  productId: number;
 }

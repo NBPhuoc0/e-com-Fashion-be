@@ -7,6 +7,7 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   OneToOne,
+  JoinColumn,
 } from 'typeorm';
 import { User } from './user.entity';
 import { OrderDetail } from './order-detail.entity';
@@ -22,7 +23,7 @@ export class Order {
   @ManyToOne(() => User, (user) => user.orders)
   user: User;
 
-  @Column({ type: 'enum', enum: OrderStatus })
+  @Column({ type: 'enum', enum: OrderStatus, default: OrderStatus.PENDING })
   orderStatus: OrderStatus;
 
   @Column('decimal')
@@ -43,11 +44,14 @@ export class Order {
   @OneToMany(() => OrderDetail, (orderDetails) => orderDetails.order, {
     cascade: true,
   })
+  @JoinColumn()
   orderDetails: OrderDetail[];
 
-  @OneToOne(() => Payment, (payment) => payment.order)
+  @OneToOne(() => Payment, (payment) => payment.order, { cascade: true })
+  @JoinColumn()
   payment: Payment;
 
-  @OneToOne(() => Shipping, (shipping) => shipping.order)
+  @OneToOne(() => Shipping, (shipping) => shipping.order, { cascade: true })
+  @JoinColumn()
   shipping: Shipping;
 }

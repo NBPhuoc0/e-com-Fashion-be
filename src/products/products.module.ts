@@ -8,7 +8,6 @@ import { Category } from 'src/entities/category.entity';
 import { Review } from 'src/entities/review.entity';
 import { S3ClientModule } from 'src/common/s3-client/s3-client.module';
 import { CategoriesService } from './categories.service';
-import { ReviewsService } from './review.service';
 import { ProductVariantsService } from './product-variant.service';
 import { Photo } from 'src/entities/photo.entity';
 
@@ -24,12 +23,12 @@ import { Photo } from 'src/entities/photo.entity';
     S3ClientModule,
   ],
   controllers: [ProductsController],
-  providers: [
+  providers: [ProductsService, CategoriesService, ProductVariantsService],
+  exports: [
+    ProductVariantsService,
     ProductsService,
     CategoriesService,
-    ReviewsService,
-    ProductVariantsService,
+    TypeOrmModule,
   ],
-  exports: [ProductsService],
 })
 export class ProductsModule {}

@@ -7,16 +7,11 @@ import {
   Length,
   IsNumber,
 } from 'class-validator';
+import { User } from 'src/entities/user.entity';
 
 export class ReviewDto {
   @IsNumber()
-  reviewId: number;
-
-  @IsNumber()
   productId: number;
-
-  @IsNumber()
-  userId: number;
 
   @IsNumber()
   @Min(1)
@@ -29,4 +24,6 @@ export class ReviewDto {
 
   @IsDate()
   createdAt: Date;
+
+  user: User;
 }

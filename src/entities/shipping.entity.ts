@@ -19,15 +19,19 @@ export class Shipping {
   @JoinColumn()
   order: Order;
 
-  @Column({ type: 'enum', enum: ShippingStatus })
+  @Column({
+    type: 'enum',
+    enum: ShippingStatus,
+    default: ShippingStatus.PENDING,
+  })
   shippingStatus: ShippingStatus;
 
   @Column()
   trackingNumber: string;
 
   @CreateDateColumn()
-  shippedDate: Date;
+  deliveryDate: Date;
 
   @UpdateDateColumn()
-  deliveryDate: Date;
+  updatedAt: Date;
 }
