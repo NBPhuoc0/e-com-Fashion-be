@@ -1,20 +1,23 @@
-import {
-  IsString,
-  IsNumber,
-  IsEnum,
-  IsArray,
-  IsUUID,
-  IsOptional,
-} from 'class-validator';
-import { ProductSize } from 'src/common/enum';
+import { ApiProperty } from '@nestjs/swagger';
+import { IsArray, IsString } from 'class-validator';
 
 export class ProductVariantDto {
+  @ApiProperty({
+    example: 'Đỏ',
+  })
   @IsString()
-  colorName: string;
+  variantColor: string;
 
-  @IsEnum(ProductSize)
-  size: ProductSize;
-
-  @IsNumber()
-  stockQuantity: number;
+  @ApiProperty({
+    example: [
+      100, // S
+      100, // M
+      100, // L
+      100, // XL
+      100, // XXL
+    ],
+    isArray: true, // Specify that this is an array
+  })
+  @IsArray()
+  listSize: [number];
 }

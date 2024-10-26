@@ -15,7 +15,7 @@ import { Product } from './product.entity';
 
 @Entity()
 @Tree('materialized-path')
-export class Category {
+export class ProductCategory {
   @PrimaryGeneratedColumn()
   categoryId: number;
 
@@ -26,10 +26,10 @@ export class Category {
   products: Product[];
 
   @TreeParent({ onDelete: 'SET NULL' })
-  parent: Category;
+  parent: ProductCategory;
 
   @TreeChildren({ cascade: true })
-  children: Category[];
+  children: ProductCategory[];
 
   @CreateDateColumn()
   createdAt: Date;

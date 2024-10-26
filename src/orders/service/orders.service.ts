@@ -6,10 +6,10 @@ import { OrderDetail } from 'src/entities/order-detail.entity';
 import { Payment } from 'src/entities/payment.entity';
 import { Shipping } from 'src/entities/shipping.entity';
 import { OrderDetailService } from './order-detail.service';
-import { OrderDto } from './dto/order.dto';
+import { OrderDto } from '../dto/order.dto';
 import { ShippingService } from './shipping.service';
 import { PaymentService } from './payment.service';
-import { ProductsService } from 'src/products/products.service';
+import { ProductsService } from 'src/products/service/products.service';
 
 @Injectable()
 export class OrdersService {

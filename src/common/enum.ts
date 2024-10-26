@@ -17,16 +17,16 @@ export enum ShippingStatus {
 }
 
 export enum ProductSize {
-  S = 'small',
-  M = 'medium',
-  L = 'large',
-  XL = 'extra large',
-  XXL = 'extra extra large',
+  S = 's',
+  M = 'm',
+  L = 'l',
+  XL = 'xl',
+  XXL = 'xxl',
 }
 
 export enum PaymentMethod {
-  COD = 'cash on delivery',
-  VNPAY = 'vnpay',
+  COD = 'COD',
+  VNPAY = 'VNPAY',
 }
 
 export enum OrderStatus {

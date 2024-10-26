@@ -34,11 +34,11 @@ export class S3ClientService {
     });
   }
 
-  async getPresignedSignedUrl(key: string, productId: number) {
+  async getPresignedSignedUrl(key: string) {
     try {
       const command = new PutObjectCommand({
-        Bucket: this.bucketName + `/products/${productId}`,
-        Key: key,
+        Bucket: this.bucketName,
+        Key: `products/${key}`,
         ACL: 'public-read',
       });
 

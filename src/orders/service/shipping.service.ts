@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Shipping } from 'src/entities/shipping.entity';
 import { Repository } from 'typeorm';
-import { ShippingDto } from './dto/shipping.dto';
+import { ShippingDto } from '../dto/shipping.dto';
 
 @Injectable()
 export class ShippingService {

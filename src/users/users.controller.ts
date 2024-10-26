@@ -9,7 +9,7 @@ import {
   UseGuards,
   Req,
 } from '@nestjs/common';
-import { UsersService } from './users.service';
+import { UsersService } from './service/users.service';
 import { AuthGuard } from '@nestjs/passport';
 import {
   ApiBearerAuth,

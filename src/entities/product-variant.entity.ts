@@ -9,7 +9,7 @@ import {
 } from 'typeorm';
 import { Product } from './product.entity';
 import { Photo } from './photo.entity';
-import { ProductSize } from 'src/common/enum';
+import { ProductVariantSizeStock } from './product-variant-size-stock.entity';
 
 @Entity()
 export class ProductVariant {
@@ -17,13 +17,13 @@ export class ProductVariant {
   variantId: number;
 
   @Column()
-  colorName: string;
+  variantColor: string;
 
-  @Column({ type: 'enum', enum: ProductSize })
-  size: ProductSize;
-
-  @Column()
-  stockQuantity: number;
+  @OneToOne(() => ProductVariantSizeStock, (ss) => ss.variantId, {
+    cascade: true,
+  })
+  @JoinColumn()
+  sizeStockQuantity: ProductVariantSizeStock;
 
   @ManyToOne(() => Product, (product) => product.variants)
   product: Product;

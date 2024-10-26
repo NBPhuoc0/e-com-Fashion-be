@@ -9,9 +9,8 @@ import {
 } from '@nestjs/common';
 import { AdminService } from './admin.service';
 import { ApiTags } from '@nestjs/swagger';
-import { ProductsService } from 'src/products/products.service';
-import { CategoriesService } from 'src/products/categories.service';
-import { ProductVariantsService } from 'src/products/product-variant.service';
+import { ProductsService } from 'src/products/service/products.service';
+import { CategoriesService } from 'src/products/service/product-categories.service';
 import { S3ClientService } from 'src/common/s3-client/s3-client.service';
 import { ProductDto } from 'src/products/dto/product.dto';
 import { CategoryDto } from 'src/products/dto/category.dto';
@@ -23,7 +22,6 @@ export class AdminController {
     private readonly adminService: AdminService,
     private readonly productsService: ProductsService,
     private readonly categoriesService: CategoriesService,
-    private readonly productVariantsService: ProductVariantsService,
     private readonly s3ClientService: S3ClientService,
   ) {}
 

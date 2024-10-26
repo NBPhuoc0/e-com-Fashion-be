@@ -8,6 +8,7 @@ export interface JwtPayload {
   userId: number;
   fullName: string;
   email: string;
+  isAdmin: boolean;
 }
 
 export interface RequestWithUser extends Request {

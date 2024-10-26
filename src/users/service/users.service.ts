@@ -5,7 +5,7 @@ import { User } from 'src/entities/user.entity';
 import { Cart } from 'src/entities/cart.entity';
 import { CartItem } from 'src/entities/cart-item.entity';
 import { signupDto } from 'src/auth/dto/signup.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { UpdateUserDto } from '../dto/update-user.dto';
 
 @Injectable()
 export class UsersService {

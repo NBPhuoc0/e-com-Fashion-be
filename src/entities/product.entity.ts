@@ -7,7 +7,7 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Category } from './category.entity';
+import { ProductCategory } from './category.entity';
 import { Review } from './review.entity';
 import { ProductVariant } from './product-variant.entity';
 
@@ -20,6 +20,9 @@ export class Product {
   productName: string;
 
   @Column()
+  urlSlug: string;
+
+  @Column()
   description: string;
 
   @Column('decimal')
@@ -30,8 +33,8 @@ export class Product {
   })
   variants: ProductVariant[];
 
-  @ManyToOne(() => Category, (category) => category.products)
-  category: Category;
+  @ManyToOne(() => ProductCategory, (category) => category.products)
+  category: ProductCategory;
 
   @OneToMany(() => Review, (review) => review.product, { cascade: true })
   reviews: Review[];

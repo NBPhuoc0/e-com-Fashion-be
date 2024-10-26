@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
-import { UsersService } from 'src/users/users.service';
+import { UsersService } from 'src/users/service/users.service';
 import * as argon2 from 'argon2';
 import { User } from 'src/entities/user.entity';
 import { JwtPayload, TokenPayload } from 'src/common/interface';
@@ -35,6 +35,7 @@ export class AuthService {
       userId: user.userId,
       fullName: user.fullName,
       email: user.email,
+      isAdmin: user.isAdmin,
     };
     const token = {
       accessToken: this.jwtService.sign(
@@ -70,7 +71,7 @@ export class AuthService {
     }
     delete user.password;
     delete user.refreshToken;
-    delete user.role;
+    delete user.isAdmin;
     const token = this.getJwtToken(user);
 
     return { token, user };
