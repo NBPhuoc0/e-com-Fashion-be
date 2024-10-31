@@ -8,6 +8,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AdminModule } from './admin/admin.module';
 import { S3ClientModule } from './common/s3-client/s3-client.module';
+import { PromotionsModule } from './promotion/promotions.module';
 
 @Module({
   imports: [
@@ -22,8 +23,8 @@ import { S3ClientModule } from './common/s3-client/s3-client.module';
       password: process.env.DB_PASS,
       database: process.env.DB_NAME,
       autoLoadEntities: true,
-      dropSchema: false, // shouldn't be used in production - may lose data
-      synchronize: true, // shouldn't be used in production - may lose data
+      dropSchema: false, //!!
+      synchronize: true,
     }),
     AuthModule,
     UsersModule,
@@ -31,6 +32,7 @@ import { S3ClientModule } from './common/s3-client/s3-client.module';
     OrdersModule,
     AdminModule,
     S3ClientModule,
+    PromotionsModule,
   ],
   controllers: [AppController],
   providers: [],

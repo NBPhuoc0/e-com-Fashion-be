@@ -6,10 +6,13 @@ import {
   OneToMany,
   CreateDateColumn,
   UpdateDateColumn,
+  JoinColumn,
+  JoinTable,
 } from 'typeorm';
 import { ProductCategory } from './category.entity';
 import { Review } from './review.entity';
 import { ProductVariant } from './product-variant.entity';
+import { Promotion } from './promotion.entity';
 
 @Entity()
 export class Product {
@@ -19,7 +22,10 @@ export class Product {
   @Column()
   productName: string;
 
-  @Column()
+  @Column({
+    unique: true,
+    nullable: true,
+  })
   urlSlug: string;
 
   @Column()
@@ -27,6 +33,11 @@ export class Product {
 
   @Column('decimal')
   price: number;
+
+  @Column({
+    default: 0,
+  })
+  sold: number;
 
   @OneToMany(() => ProductVariant, (variant) => variant.product, {
     cascade: true,
@@ -38,6 +49,14 @@ export class Product {
 
   @OneToMany(() => Review, (review) => review.product, { cascade: true })
   reviews: Review[];
+
+  @Column({
+    nullable: true,
+  })
+  promotionPrice: number;
+
+  @ManyToOne(() => Promotion, (promotion) => promotion.products)
+  promotion: Promotion;
 
   @CreateDateColumn()
   createdAt: Date;

@@ -4,7 +4,7 @@ import {
   Logger,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { Product } from '../../entities/product.entity';
 import { ProductDto } from '../dto/product.dto';
 import { ProductVariantsService } from './product-variants.service';
@@ -26,45 +26,56 @@ export class ProductsService {
   logger = new Logger('ProductsService');
 
   async create(createProductDto: ProductDto) {
-    const product = this.productsRepository.create(createProductDto);
+    const product = await this.productsRepository.create(createProductDto);
     const presignedUrlForVariants = {};
     // product.productName = createProductDto.productName;
     // product.description = createProductDto.description;
     // product.price = createProductDto.price;
-    product.urlSlug = slugify(createProductDto.productName);
-    this.logger.log({ ...product });
+    // return product;
+    // this.logger.log({ ...product });
 
     product.category = await this.categoriesService.findOne(
       createProductDto.categoryId,
     );
 
-    product.variants = [];
+    // product.variants = [];
 
-    for (const variant of createProductDto.variants) {
-      const newVariant = await this.productVariantsService.create(variant);
-      presignedUrlForVariants[newVariant.variantId] = [];
-
+    for (const i in product.variants) {
+      // this.logger.log({ ...product.variants[variant] });
+      const newVariant = this.productVariantsService.create(
+        createProductDto.variants[i],
+      );
+      // presignedUrlForVariants[newVariant.variantId] = [];
       // for (let i = 0; i < 6; i++) {
       //   const presignedUrl = await this.s3ClientService.getPresignedSignedUrl(
-      //     `${product.productId}/${newVariant.variantId}/${i}`,
+      //     `${product.urlSlug}/${newVariant.variantId}/${i}`,
       //   );
       //   presignedUrlForVariants[newVariant.variantId].push(presignedUrl.url);
       // }
-
-      product.variants.push(newVariant);
+      product.variants[i] = newVariant;
     }
 
-    // this.logger.log(presignedUrlForVariants);
+    // this.logger.log({ ...presignedUrlForVariants, ...product });
 
-    this.productsRepository.save(product);
-    return { productId: product.productId, presignedUrlForVariants };
+    await this.productsRepository.save(product);
+
+    const urlSlug = slugify(createProductDto.productName);
+
+    product.urlSlug = `${urlSlug}-${product.productId}`;
+    // return { productId: product.productId, presignedUrlForVariants };
+    return await this.productsRepository.save(product);
   }
 
-  findAll(page: number = 0, skip: number = 10): Promise<Product[]> {
+  findAll(page: number = 0, skip: number = 24): Promise<Product[]> {
     const take = skip;
     const offset = page * skip;
     return this.productsRepository.find({
-      relations: ['variants', 'category'],
+      relations: [
+        'variants',
+        'variants.sizeStockQuantity',
+        'category.parent',
+        'promotion',
+      ],
       skip: offset,
       take,
     });
@@ -74,10 +85,14 @@ export class ProductsService {
     return this.productsRepository.findOneBy({ productId: id });
   }
 
+  findByIds(ids: number[]): Promise<Product[]> {
+    return this.productsRepository.findBy({ productId: In(ids) });
+  }
+
   async findByCategoryId(
     categoryId: number,
     page: number = 0,
-    skip: number = 20,
+    skip: number = 24,
   ): Promise<Product[]> {
     const take = skip;
     const offset = page * skip;
@@ -91,7 +106,7 @@ export class ProductsService {
   async findByProductName(
     productName: string,
     page: number = 0,
-    skip: number = 20,
+    skip: number = 24,
   ): Promise<Product[]> {
     const take = skip;
     const offset = page * skip;

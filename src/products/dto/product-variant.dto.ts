@@ -9,6 +9,12 @@ export class ProductVariantDto {
   variantColor: string;
 
   @ApiProperty({
+    example: '#ff0000',
+  })
+  @IsString()
+  variantHex: string;
+
+  @ApiProperty({
     example: [
       100, // S
       100, // M

@@ -22,6 +22,9 @@ export class ProductCategory {
   @Column()
   categoryName: string;
 
+  @Column()
+  urlSlug: string;
+
   @OneToMany(() => Product, (product) => product.category)
   products: Product[];
 
@@ -31,9 +34,13 @@ export class ProductCategory {
   @TreeChildren({ cascade: true })
   children: ProductCategory[];
 
-  @CreateDateColumn()
+  @CreateDateColumn({
+    select: false,
+  })
   createdAt: Date;
 
-  @UpdateDateColumn()
+  @UpdateDateColumn({
+    select: false,
+  })
   updatedAt: Date;
 }

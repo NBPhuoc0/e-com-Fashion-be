@@ -1,10 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ProductVariant } from '../../entities/product-variant.entity';
 import { ProductVariantDto } from '../dto/product-variant.dto';
 import { ProductVariantSizeStock } from 'src/entities/product-variant-size-stock.entity';
 import { ProductSize } from 'src/common/enum';
+import { log } from 'console';
 
 @Injectable()
 export class ProductVariantsService {
@@ -14,18 +15,41 @@ export class ProductVariantsService {
     @InjectRepository(ProductVariantSizeStock)
     private productVariantSizeStockRepository: Repository<ProductVariantSizeStock>,
   ) {}
+  logger = new Logger('ProductVariantsService');
 
-  create(createProductVariantDto: ProductVariantDto): Promise<ProductVariant> {
-    const variant = this.productVariantsRepository.create();
-    variant.variantColor = createProductVariantDto.variantColor;
-
+  create(createProductVariantDto: ProductVariantDto): ProductVariant {
+    const variant = this.productVariantsRepository.create(
+      createProductVariantDto,
+    );
+    // this.logger.log({ variant });
+    // variant.variantColor = createProductVariantDto.variantColor;
     const sizeStock = this.productVariantSizeStockRepository.create();
     for (const size in createProductVariantDto.listSize) {
+      switch (size) {
+        case '0':
+          sizeStock.s = createProductVariantDto.listSize[size];
+          break;
+        case '1':
+          sizeStock.m = createProductVariantDto.listSize[size];
+          break;
+        case '2':
+          sizeStock.l = createProductVariantDto.listSize[size];
+          break;
+        case '3':
+          sizeStock.xl = createProductVariantDto.listSize[size];
+          break;
+        case '4':
+          sizeStock.xxl = createProductVariantDto.listSize[size];
+          break;
+        default:
+          break;
+      }
     }
 
-    this.productVariantSizeStockRepository.save(sizeStock);
     variant.sizeStockQuantity = sizeStock;
-    return this.productVariantsRepository.save(variant);
+
+    return variant;
+    // return this.productVariantsRepository.save(variant);
   }
 
   findAll(): Promise<ProductVariant[]> {

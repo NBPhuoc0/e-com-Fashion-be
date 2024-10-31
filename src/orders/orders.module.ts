@@ -10,11 +10,12 @@ import { OrderDetailService } from './service/order-detail.service';
 import { ShippingService } from './service/shipping.service';
 import { PaymentService } from './service/payment.service';
 import { ProductsModule } from 'src/products/products.module';
+import { PromotionsModule } from 'src/promotion/promotions.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Order, OrderDetail, Shipping, Payment]),
-    ProductsModule,
+    PromotionsModule,
   ],
   controllers: [],
   providers: [
@@ -23,6 +24,6 @@ import { ProductsModule } from 'src/products/products.module';
     ShippingService,
     PaymentService,
   ],
-  exports: [OrdersService, ProductsModule, TypeOrmModule],
+  exports: [OrdersService, PromotionsModule, TypeOrmModule],
 })
 export class OrdersModule {}

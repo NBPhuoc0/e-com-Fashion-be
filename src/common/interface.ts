@@ -1,3 +1,4 @@
+import exp from 'constants';
 import { Request } from 'express';
 
 export interface TokenPayload {
@@ -20,4 +21,15 @@ export interface RequestWithRefreshToken extends Request {
     refreshToken: string;
     userId: number;
   };
+}
+
+export enum PromotionType {
+  PERCENTAGE = 'PERCENTAGE',
+  NET = 'NET',
+  FLAT = 'FLAT',
+}
+
+export enum VoucherType {
+  PERCENTAGE = 'PERCENTAGE',
+  NET = 'NET',
 }

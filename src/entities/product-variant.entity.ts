@@ -19,10 +19,13 @@ export class ProductVariant {
   @Column()
   variantColor: string;
 
+  @Column()
+  variantHex: string;
+
   @OneToOne(() => ProductVariantSizeStock, (ss) => ss.variantId, {
     cascade: true,
   })
-  @JoinColumn()
+  @JoinColumn({})
   sizeStockQuantity: ProductVariantSizeStock;
 
   @ManyToOne(() => Product, (product) => product.variants)
