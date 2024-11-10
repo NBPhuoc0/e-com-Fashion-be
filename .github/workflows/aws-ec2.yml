@@ -36,7 +36,7 @@ jobs:
           ssh -o StrictHostKeyChecking=no -i github.pem ec2-user@ec2-44-208-24-195.compute-1.amazonaws.com '
 
               # Now we have got the access of EC2 and we will start the deploy .
-              cd /home/ubuntu/e-com-Fashion-be &&
+              cd e-com-Fashion-be &&
               git checkout main &&
               git fetch --all &&
               git reset --hard origin/main &&
