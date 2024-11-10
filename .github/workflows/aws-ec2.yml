@@ -34,10 +34,10 @@ jobs:
       
         run: |
           echo "$PRIVATE_KEY" > private_key.pem && chmod 600 private_key.pem
-          ssh -o StrictHostKeyChecking=no -i private_key.pem ${USERNAME}@${HOSTNAME} '
+          ssh -o StrictHostKeyChecking=no -i private_key.pem ec2-user@ec2-13-229-72-113.ap-southeast-1.compute.amazonaws.com '
 
               # Now we have got the access of EC2 and we will start the deploy .
-              cd /home/ubuntu/<PROJECT_DIRECTORY> &&
+              cd /home/ubuntu/e-com-Fashion-be &&
               git checkout main &&
               git fetch --all &&
               git reset --hard origin/main &&
