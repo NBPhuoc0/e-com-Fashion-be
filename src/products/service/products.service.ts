@@ -4,7 +4,7 @@ import {
   Logger,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { In, Repository } from 'typeorm';
+import { Between, In, Repository } from 'typeorm';
 import { Product } from '../../entities/product.entity';
 import { ProductDto } from '../dto/product.dto';
 import { ProductVariantsService } from './product-variants.service';
@@ -93,13 +93,37 @@ export class ProductsService {
     categoryId: number,
     page: number = 0,
     skip: number = 24,
+    priceOption?: number,
+    order?: string,
   ): Promise<Product[]> {
     const take = skip;
     const offset = page * skip;
+    let minPrice = 0;
+    let maxPrice = 10000000;
+    order = order || 'ASC';
+    switch (priceOption) {
+      case 1:
+        maxPrice = 150000;
+        break;
+      case 2:
+        minPrice = 150000;
+        maxPrice = 300000;
+        break;
+      case 3:
+        minPrice = 300000;
+        break;
+    }
     return this.productsRepository.find({
-      where: { category: { categoryId } },
+      where: { category: { categoryId }, price: Between(minPrice, maxPrice) },
+      relations: [
+        'variants',
+        'variants.sizeStockQuantity',
+        'category.parent',
+        'promotion',
+      ],
       skip: offset,
-      take,
+      order: order === 'ASC' ? { price: 'ASC' } : { price: 'DESC' },
+      take: take,
     });
   }
 
@@ -107,11 +131,72 @@ export class ProductsService {
     productName: string,
     page: number = 0,
     skip: number = 24,
+    priceOption?: number,
+    order?: string,
   ): Promise<Product[]> {
     const take = skip;
     const offset = page * skip;
+    let minPrice = 0;
+    let maxPrice = 10000000;
+    order = order || 'ASC';
+    switch (priceOption) {
+      case 1:
+        maxPrice = 150000;
+        break;
+      case 2:
+        minPrice = 150000;
+        maxPrice = 300000;
+        break;
+      case 3:
+        minPrice = 300000;
+        break;
+    }
     return this.productsRepository.find({
-      where: { productName },
+      where: { productName: productName, price: Between(minPrice, maxPrice) },
+      relations: [
+        'variants',
+        'variants.sizeStockQuantity',
+        'category.parent',
+        'promotion',
+      ],
+      skip: offset,
+      take: take,
+      order: order === 'ASC' ? { price: 'ASC' } : { price: 'DESC' },
+    });
+  }
+
+  async findByPromotionId(
+    promotionId: number,
+    page: number = 0,
+    skip: number = 24,
+    priceOption?: number,
+    order?: string,
+  ): Promise<Product[]> {
+    const take = skip;
+    const offset = page * skip;
+    let minPrice = 0;
+    let maxPrice = 10000000;
+    order = order || 'ASC';
+    switch (priceOption) {
+      case 1:
+        maxPrice = 150000;
+        break;
+      case 2:
+        minPrice = 150000;
+        maxPrice = 300000;
+        break;
+      case 3:
+        minPrice = 300000;
+        break;
+    }
+    return this.productsRepository.find({
+      where: { promotion: { promotionId } },
+      relations: [
+        'variants',
+        'variants.sizeStockQuantity',
+        'category.parent',
+        'promotion',
+      ],
       skip: offset,
       take,
     });
