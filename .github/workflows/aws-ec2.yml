@@ -36,13 +36,10 @@ jobs:
           ssh -o StrictHostKeyChecking=no -i github.pem ec2-user@ec2-44-208-24-195.compute-1.amazonaws.com '
 
               # Now we have got the access of EC2 and we will start the deploy .
-              cd ~/e-com-Fashion-be &&
-              git checkout main &&
-              git fetch --all &&
-              git reset --hard origin/main &&
-              git pull origin main &&
+              git -C e-com-Fashion-be pull || git clone hhttps://github.com/NBPhuoc0/e-com-Fashion-be.git &&
+              cd e-com-Fashion-be &&
               sudo npm i &&
               sudo npm run build &&
-              sudo pm2 stop ./dist/main.js &&
+              sudo pm2 stop ./dist/main.js || true &&
               sudo pm2 start ./dist/main.js
               '
