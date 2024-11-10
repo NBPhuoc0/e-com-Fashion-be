@@ -30,7 +30,7 @@ jobs:
             S3_SECRET_KEY: ${{secrets.S3_SECRET_KEY}}
             S3_BUCKET: ${{secrets.S3_BUCKET}}
             S3_REGION: ${{secrets.S3_REGION}}
-            PORT:443
+            PORT:'443'
       
         run: |
           echo "$PRIVATE_KEY" > github.pem && chmod 600 github.pem
@@ -41,6 +41,6 @@ jobs:
               cd e-com-Fashion-be &&
               sudo npm i &&
               sudo npm run build &&
-              sudo pm2 stop ./dist/main.js || true &&
-              sudo pm2 start ./dist/main.js
+              sudo pm2 stop dist/main.js || true &&
+              sudo pm2 start dist/main.js
               '
