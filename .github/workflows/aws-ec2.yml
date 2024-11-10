@@ -15,33 +15,6 @@ jobs:
         with:
           SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
           ARGS: "-rlgoDzvc -i --delete"
-          SOURCE: "fstore-api/"
           REMOTE_HOST: ${{ secrets.HOST_DNS }}
           REMOTE_USER: ${{ secrets.USERNAME }}
-          TARGET: ${{ secrets.TARGET_DIR }}
-          EXCLUDE: "/dist/, /node_modules/"
-          SCRIPT_BEFORE: |
-            whoami
-            ls -al
-            mkdir -p ${{ secrets.TARGET_DIR }}
-          SCRIPT_AFTER: |
-            cd ${{ secrets.TARGET_DIR }}
-            ls -al
-
-            echo "Installing Node.js..."
-            if ! command -v nvm &> /dev/null; then
-              curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.5/install.sh | bash
-              export NVM_DIR="$HOME/.nvm"
-              [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-            fi
-            nvm install node
-
-            echo "Installing PM2..."
-            if ! command -v pm2 &> /dev/null; then
-            npm install -g pm2
-            fi
-
-            npm install
-
-            echo "Starting/restarting application..."
-            pm2 restart main.js || pm2 start main.js
+          
