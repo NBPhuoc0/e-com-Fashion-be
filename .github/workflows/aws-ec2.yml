@@ -23,7 +23,7 @@ jobs:
               # Now we have got the access of EC2 and we will start the deploy .
               git -C e-com-Fashion-be pull || git clone hhttps://github.com/NBPhuoc0/e-com-Fashion-be.git &&
               cd e-com-Fashion-be &&
-              echo "$ENV" > .env &&
+              printf "$ENV" > .env &&
               sudo npm i &&
               sudo npm run build &&
               sudo pm2 stop dist/main.js || true &&
