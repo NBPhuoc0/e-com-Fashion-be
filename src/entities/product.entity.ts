@@ -44,7 +44,7 @@ export class Product {
   @ManyToOne(() => ProductCategory, (category) => category.products)
   category: ProductCategory;
 
-  @OneToMany(() => Review, (review) => review.product, { cascade: true })
+  @OneToMany(() => Review, (review) => review.product)
   reviews: Review[];
 
   @Column('decimal')
