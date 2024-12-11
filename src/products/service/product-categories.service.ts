@@ -1,4 +1,9 @@
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  Logger,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
 import { ProductCategory } from '../../entities/category.entity';
@@ -19,8 +24,11 @@ export class CategoriesService {
   async create(createCategoryDto: CategoryDto): Promise<ProductCategory> {
     const category = this.categoriesRepository.create();
     category.categoryName = createCategoryDto.categoryName;
-    category.urlSlug = slugify(createCategoryDto.categoryName);
-
+    const slug = slugify(createCategoryDto.categoryName, { lower: true });
+    if (await this.categoriesRepository.existsBy({ urlSlug: slug })) {
+      throw new BadRequestException('Category already exists');
+    }
+    category.urlSlug = slug;
     if (createCategoryDto.parent) {
       category.parent = await this.findOne(createCategoryDto.parent);
     }
@@ -28,8 +36,12 @@ export class CategoriesService {
     return this.categoriesRepository.save(category);
   }
 
-  findAll(): Promise<ProductCategory[]> {
+  findTree(): Promise<ProductCategory[]> {
     return this.dataSource.getTreeRepository(ProductCategory).findTrees();
+  }
+
+  findAll(): Promise<ProductCategory[]> {
+    return this.categoriesRepository.find();
   }
 
   findOne(id: number): Promise<ProductCategory> {
@@ -60,5 +72,9 @@ export class CategoriesService {
 
   async remove(id: number): Promise<void> {
     await this.categoriesRepository.delete(id);
+  }
+
+  async updateCateImg(id: number, imgUrl: string): Promise<void> {
+    await this.categoriesRepository.update(id, { imgUrl });
   }
 }

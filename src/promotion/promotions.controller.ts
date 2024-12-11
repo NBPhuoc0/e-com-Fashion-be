@@ -7,8 +7,8 @@ import {
   Param,
   Delete,
 } from '@nestjs/common';
-import { PromotionsService } from './promotions.service';
-import { promotionDto } from './dto/promotion.dto';
+import { PromotionsService } from './services/promotions.service';
+import { PromotionDto } from './dto/promotion.dto';
 import { ApiBody, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('Promotions')
@@ -17,12 +17,17 @@ export class PromotionsController {
   constructor(private readonly promotionsService: PromotionsService) {}
 
   @Post()
-  create(@Body() dto: promotionDto) {
+  create(@Body() dto: PromotionDto) {
     return this.promotionsService.createPromotion(dto);
   }
 
   @Get()
   findAll() {
     return this.promotionsService.getPromotions();
+  }
+
+  @Get(':id')
+  findOne(@Param('id') id: string) {
+    return this.promotionsService.getPromotionWithProdsById(+id);
   }
 }

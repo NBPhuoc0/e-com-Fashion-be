@@ -7,7 +7,7 @@ import { OrdersModule } from './orders/orders.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AdminModule } from './admin/admin.module';
-import { S3ClientModule } from './common/s3-client/s3-client.module';
+import { CommonModule } from './common/common.module';
 import { PromotionsModule } from './promotion/promotions.module';
 
 @Module({
@@ -31,7 +31,7 @@ import { PromotionsModule } from './promotion/promotions.module';
     ProductsModule,
     OrdersModule,
     AdminModule,
-    S3ClientModule,
+    CommonModule,
     PromotionsModule,
   ],
   controllers: [AppController],

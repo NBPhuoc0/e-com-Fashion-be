@@ -1,11 +1,12 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Promotion } from 'src/entities/promotion.entity';
-import { Repository } from 'typeorm';
-import { promotionDto } from './dto/promotion.dto';
+import { LessThanOrEqual, Repository } from 'typeorm';
+import { PromotionDto } from '../dto/promotion.dto';
 import { ProductsService } from 'src/products/service/products.service';
-import { Product as number } from 'src/entities/product.entity';
 import { PromotionType } from 'src/common/interface';
+import { Cron, CronExpression } from '@nestjs/schedule';
+import { PromotionUpdateDto } from '../dto/promotion-update.dto';
 
 @Injectable()
 export class PromotionsService {
@@ -17,15 +18,29 @@ export class PromotionsService {
 
   logger = new Logger('PromotionsService');
 
-  async createPromotion(dto: promotionDto): Promise<Promotion> {
-    const { products, ...promotionData } = dto;
+  @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
+  async checkExpiredPromotions() {
+    const promotions = await this.promotionRepository.find({
+      where: {
+        promotionStatus: true,
+        promotionEndDate: LessThanOrEqual(new Date()),
+      },
+    });
 
+    promotions.map(async (promotion) => {
+      this.updateStatus(promotion);
+    });
+  }
+
+  async createPromotion(dto: PromotionDto): Promise<Promotion> {
     // Create and save the promotion entity
     const promotion = this.promotionRepository.create(dto);
     promotion.products = [];
 
     // Find and update products with the promotion
-    const productEntities = await this.productService.findByIds(products);
+    const productEntities = await this.productService.findProdsByIds(
+      dto.products,
+    );
     // this.logger.log({ productEntities });
     // if (productEntities.length === 0) {
     //   throw new NotFoundException('No products found for this promotion');
@@ -67,5 +82,44 @@ export class PromotionsService {
     return this.promotionRepository.find({
       relations: ['products'],
     });
+  }
+
+  async getPromotionWithProdsById(id: number): Promise<Promotion> {
+    return this.promotionRepository.findOne({
+      where: { promotionId: id },
+      relations: ['products'],
+    });
+  }
+
+  async getPromotionById(promotionId: number): Promise<Promotion> {
+    return this.promotionRepository.findOneBy({
+      promotionId,
+    });
+  }
+
+  async updatePromotion(
+    id: number,
+    dto: PromotionUpdateDto,
+  ): Promise<Promotion> {
+    return await this.promotionRepository.save({
+      ...dto,
+      promotionId: id,
+    });
+  }
+
+  async updateStatus(promotion: Promotion): Promise<void> {
+    await this.promotionRepository.update(promotion, {
+      promotionStatus: !promotion.promotionStatus,
+    });
+    await this.productService.removePromotionFromProduct(promotion);
+  }
+
+  async remove(id: number): Promise<void> {
+    const promotion = await this.getPromotionById(id);
+    if (!promotion) {
+      throw new NotFoundException('Promotion not found');
+    }
+    await this.productService.removePromotionFromProduct(promotion);
+    this.promotionRepository.remove(promotion);
   }
 }

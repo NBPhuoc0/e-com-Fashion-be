@@ -20,6 +20,7 @@ export class Cart {
   user: User;
 
   @OneToMany(() => CartItem, (cartItem) => cartItem.cart, { cascade: true })
+  @JoinColumn()
   cartItems: CartItem[];
 
   @CreateDateColumn()

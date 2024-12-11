@@ -23,5 +23,14 @@ export class CartItem {
   productVariant: ProductVariant;
 
   @Column()
+  productId: number;
+
+  @Column('decimal')
+  price: number;
+
+  @Column('decimal')
+  promotionPrice: number;
+
+  @Column()
   quantity: number;
 }

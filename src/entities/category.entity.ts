@@ -25,6 +25,9 @@ export class ProductCategory {
   @Column()
   urlSlug: string;
 
+  @Column()
+  imgUrl: string;
+
   @OneToMany(() => Product, (product) => product.category)
   products: Product[];
 

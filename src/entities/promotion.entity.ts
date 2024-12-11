@@ -14,8 +14,16 @@ export class Promotion {
   @PrimaryGeneratedColumn()
   promotionId: number;
 
+  @Column({
+    unique: true,
+  })
+  promotionSlug: string;
+
   @Column()
   promotionName: string;
+
+  @Column()
+  promotionImage: string;
 
   @Column()
   promotionDescription: string;

@@ -1,4 +1,11 @@
-import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
+import {
+  BadRequestException,
+  HttpException,
+  HttpStatus,
+  Injectable,
+  Logger,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from 'src/users/service/users.service';
@@ -17,17 +24,6 @@ export class AuthService {
 
   private async hashPassword(password: string): Promise<string> {
     return argon2.hash(password);
-  }
-
-  private async validateUser(
-    email: string,
-    password: string,
-  ): Promise<User | null> {
-    const user = await this.usersService.findUserByEmail(email);
-    if (user && (await argon2.verify(user.password, password))) {
-      return user;
-    }
-    return null;
   }
 
   private getJwtToken(user: User): TokenPayload {
@@ -54,7 +50,7 @@ export class AuthService {
       ),
     };
 
-    this.usersService.updateUser(user.userId, {
+    this.usersService.updateUserProfile(user.userId, {
       refreshToken: token.refreshToken,
     });
 
@@ -67,7 +63,7 @@ export class AuthService {
   ): Promise<{ token: TokenPayload; user: User }> {
     const user = await this.usersService.findUserByEmail(email);
     if (!user || !(await argon2.verify(user.password, password))) {
-      throw new HttpException('Invalid credentials', HttpStatus.UNAUTHORIZED);
+      throw new UnauthorizedException('Invalid credentials');
     }
     delete user.password;
     delete user.refreshToken;
@@ -80,7 +76,7 @@ export class AuthService {
   async signup(signupDto: signupDto): Promise<void> {
     const user = await this.usersService.findUserByEmail(signupDto.email);
     if (user) {
-      throw new HttpException('User already exists', HttpStatus.BAD_REQUEST);
+      throw new BadRequestException('User already exists');
     }
     const hashedPassword = await this.hashPassword(signupDto.password);
     await this.usersService.createUser({
@@ -91,7 +87,7 @@ export class AuthService {
   }
 
   async signout(userId: number): Promise<void> {
-    await this.usersService.updateUser(userId, {
+    await this.usersService.updateUserProfile(userId, {
       refreshToken: null,
     });
     return;

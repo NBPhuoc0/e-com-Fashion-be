@@ -1,4 +1,3 @@
-import exp from 'constants';
 import { Request } from 'express';
 
 export interface TokenPayload {
@@ -16,11 +15,8 @@ export interface RequestWithUser extends Request {
   user: JwtPayload;
 }
 
-export interface RequestWithRefreshToken extends Request {
-  payload: {
-    refreshToken: string;
-    userId: number;
-  };
+export interface RequestWithRefreshToken extends RequestWithUser {
+  user: JwtPayload & { refreshToken: string };
 }
 
 export enum PromotionType {

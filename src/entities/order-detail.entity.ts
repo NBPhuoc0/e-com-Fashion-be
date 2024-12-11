@@ -23,8 +23,14 @@ export class OrderDetail {
   productVariant: ProductVariant;
 
   @Column()
-  quantity: number;
+  productId: number;
 
   @Column('decimal')
-  unitPrice: number;
+  price: number;
+
+  @Column('decimal')
+  promotionPrice: number;
+
+  @Column()
+  quantity: number;
 }

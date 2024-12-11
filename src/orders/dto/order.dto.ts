@@ -7,7 +7,7 @@ import {
   IsArray,
 } from 'class-validator';
 import { Type } from 'class-transformer';
-import { OrderStatus, PaymentMethod } from 'src/common/enum';
+import { OrderStatus, PaymentMethod } from 'src/common/common.e';
 import { OrderDetailDto } from './order-detail.dto';
 import { PaymentDto } from './payment.dto';
 import { ShippingDto } from './shipping.dto';

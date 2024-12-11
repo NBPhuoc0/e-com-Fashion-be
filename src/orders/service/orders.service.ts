@@ -4,12 +4,11 @@ import { Order } from 'src/entities/order.entity';
 import { Repository } from 'typeorm';
 import { OrderDetail } from 'src/entities/order-detail.entity';
 import { Payment } from 'src/entities/payment.entity';
-import { Shipping } from 'src/entities/shipping.entity';
 import { OrderDetailService } from './order-detail.service';
 import { OrderDto } from '../dto/order.dto';
-import { ShippingService } from './shipping.service';
 import { PaymentService } from './payment.service';
 import { ProductsService } from 'src/products/service/products.service';
+import { PaymentDto } from '../dto/payment.dto';
 
 @Injectable()
 export class OrdersService {
@@ -17,18 +16,17 @@ export class OrdersService {
     @InjectRepository(Order)
     private ordersRepository: Repository<Order>,
     private orderDetailService: OrderDetailService,
-    private shippingService: ShippingService,
     private paymentService: PaymentService,
     private productService: ProductsService,
   ) {}
 
   async create(dto: OrderDto): Promise<Order> {
     const order = this.ordersRepository.create();
-
+    const payment = this.paymentService.create();
     order.user = dto.user;
-
     order.shippingAddress = dto.shippingAddress;
-    order.paymentMethod = dto.paymentMethod;
+
+    order.payment = payment;
 
     order.orderDetails = await Promise.all(
       dto.orderDetails.map((detail) => this.orderDetailService.create(detail)),
@@ -37,7 +35,7 @@ export class OrdersService {
     return this.ordersRepository.save(order);
   }
 
-  async findAll(): Promise<Order[]> {
-    return this.ordersRepository.find();
+  async findAll(skip: number = 0, take: number = 24): Promise<Order[]> {
+    return this.ordersRepository.find({ skip: 0, take: 10 });
   }
 }

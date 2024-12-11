@@ -7,21 +7,30 @@ import {
   CreateDateColumn,
 } from 'typeorm';
 import { Order } from './order.entity';
+import { PaymentMethod, PaymentStatus } from 'src/common/common.e';
 
 @Entity()
 export class Payment {
   @PrimaryGeneratedColumn()
   paymentId: number;
 
-  @OneToOne(() => Order, (order) => order.payment)
-  @JoinColumn()
-  order: Order;
+  @Column({
+    type: 'enum',
+    enum: PaymentMethod,
+  })
+  paymentMethod: PaymentMethod;
 
-  @Column()
-  paymentMethod: string;
+  @Column('decimal')
+  paymentAmount: number;
 
-  @Column()
-  paymentStatus: string;
+  @Column({ nullable: true })
+  paymentReference: string;
+
+  @Column({
+    type: 'enum',
+    enum: PaymentStatus,
+  })
+  paymentStatus: PaymentStatus;
 
   @CreateDateColumn()
   paymentDate: Date;

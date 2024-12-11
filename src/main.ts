@@ -3,7 +3,7 @@ import { AppModule } from './app.module';
 import { Logger, ValidationPipe } from '@nestjs/common';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import { setupSwagger } from './utils/swagger';
-import * as cookieParser from 'cookie-parser';
+import cookieParser from 'cookie-parser';
 import { TypeORMExceptionFilter } from './common/filters/typeorm-exception.filter';
 
 async function bootstrap() {
@@ -17,7 +17,7 @@ async function bootstrap() {
     new ValidationPipe({
       whitelist: false,
       transform: true,
-      forbidUnknownValues: false,
+      forbidUnknownValues: true,
       forbidNonWhitelisted: false,
       validationError: {
         target: true,

@@ -1,4 +1,4 @@
-import { Role } from 'src/common/enum';
+import { Role } from 'src/common/common.e';
 import { IsString, IsNotEmpty, IsEmail } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 export class UserDto {

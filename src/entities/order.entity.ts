@@ -12,8 +12,8 @@ import {
 import { User } from './user.entity';
 import { OrderDetail } from './order-detail.entity';
 import { Payment } from './payment.entity';
-import { Shipping } from './shipping.entity';
-import { OrderStatus, PaymentMethod } from 'src/common/enum';
+import { OrderStatus, PaymentMethod } from 'src/common/common.e';
+import { Voucher } from './voucher.entity';
 
 @Entity()
 export class Order {
@@ -23,17 +23,20 @@ export class Order {
   @ManyToOne(() => User, (user) => user.orders)
   user: User;
 
-  @Column({ type: 'enum', enum: OrderStatus, default: OrderStatus.PENDING })
+  @Column({ type: 'enum', enum: OrderStatus, default: OrderStatus.PROCESSING })
   orderStatus: OrderStatus;
+
+  @Column('decimal')
+  shippingFee: number;
+
+  @Column('decimal')
+  subTotal: number;
 
   @Column('decimal')
   totalPrice: number;
 
   @Column()
   shippingAddress: string;
-
-  @Column({ type: 'enum', enum: PaymentMethod })
-  paymentMethod: PaymentMethod;
 
   @CreateDateColumn()
   orderDate: Date;
@@ -47,11 +50,13 @@ export class Order {
   @JoinColumn()
   orderDetails: OrderDetail[];
 
-  @OneToOne(() => Payment, (payment) => payment.order, { cascade: true })
+  @OneToOne(() => Payment, {
+    cascade: true,
+  })
   @JoinColumn()
   payment: Payment;
 
-  @OneToOne(() => Shipping, (shipping) => shipping.order, { cascade: true })
+  @ManyToOne(() => Voucher, {})
   @JoinColumn()
-  shipping: Shipping;
+  voucher: Voucher;
 }

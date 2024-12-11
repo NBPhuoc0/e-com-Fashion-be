@@ -23,16 +23,20 @@ export class ProductDto {
   price: number;
 
   @ApiProperty({
-    example: [
-      {
-        variantColor: 'Đỏ',
-        listSize: [100, 100, 100, 100, 100],
-      },
-      {
-        variantColor: 'Xanh',
-        listSize: [100, 100, 100, 100, 100],
-      },
-    ],
+    example: {
+      example: [
+        {
+          variantColor: 'Đỏ',
+          variantHex: '#ff0000',
+          listSize: [100, 100, 100, 100, 100],
+        },
+        {
+          variantColor: 'Xanh',
+          variantHex: '#00ff00',
+          listSize: [100, 100, 100, 100, 100],
+        },
+      ],
+    },
   })
   @IsArray()
   variants: ProductVariantDto[];

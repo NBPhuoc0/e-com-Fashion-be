@@ -9,25 +9,29 @@ import { Product } from '../../entities/product.entity';
 import { ProductDto } from '../dto/product.dto';
 import { ProductVariantsService } from './product-variants.service';
 import { CategoriesService } from './product-categories.service';
-import { S3ClientService } from 'src/common/s3-client/s3-client.service';
 import { UpdateProductDto } from '../dto/update-product.dto';
 import slugify from 'slugify';
+import { PhotoDto } from '../dto/photo.dto';
+import { Promotion } from 'src/entities/promotion.entity';
+import { ProductVariant } from 'src/entities/product-variant.entity';
+import { Photo } from 'src/entities/photo.entity';
 
 @Injectable()
 export class ProductsService {
   constructor(
     @InjectRepository(Product)
     private productsRepository: Repository<Product>,
+    @InjectRepository(Photo)
+    private photoRepository: Repository<Photo>,
     private productVariantsService: ProductVariantsService,
     private categoriesService: CategoriesService,
-    private s3ClientService: S3ClientService,
   ) {}
 
   logger = new Logger('ProductsService');
 
   async create(createProductDto: ProductDto) {
-    const product = await this.productsRepository.create(createProductDto);
-    const presignedUrlForVariants = {};
+    const product = this.productsRepository.create(createProductDto);
+    // const presignedUrlForVariants = {};
     // product.productName = createProductDto.productName;
     // product.description = createProductDto.description;
     // product.price = createProductDto.price;
@@ -59,11 +63,23 @@ export class ProductsService {
 
     await this.productsRepository.save(product);
 
-    const urlSlug = slugify(createProductDto.productName);
+    product.urlSlug =
+      slugify(createProductDto.productName) + '-' + product.productId;
 
-    product.urlSlug = `${urlSlug}-${product.productId}`;
     // return { productId: product.productId, presignedUrlForVariants };
     return await this.productsRepository.save(product);
+  }
+
+  createPhoto(createPhotoDto: PhotoDto): Photo {
+    return this.photoRepository.create(createPhotoDto);
+  }
+
+  async updatePhotoVariant(variant: ProductVariant, imgUrls: string[]) {
+    variant.photos = [];
+    variant.photos = imgUrls.map((url, i): Photo => {
+      return this.createPhoto({ imgUrl: url, position: i });
+    });
+    return await this.productVariantsService.saveProductVariant(variant);
   }
 
   findAll(page: number = 0, skip: number = 24): Promise<Product[]> {
@@ -81,12 +97,24 @@ export class ProductsService {
     });
   }
 
-  findOne(id: number): Promise<Product> {
+  findOneProd(id: number): Promise<Product> {
     return this.productsRepository.findOneBy({ productId: id });
   }
 
-  findByIds(ids: number[]): Promise<Product[]> {
+  findProdsByIds(ids: number[]): Promise<Product[]> {
     return this.productsRepository.findBy({ productId: In(ids) });
+  }
+
+  findProdBySlug(slug: string): Promise<Product> {
+    return this.productsRepository.findOneBy({ urlSlug: slug });
+  }
+
+  findVariantById(variantId: number): Promise<ProductVariant> {
+    return this.productVariantsService.findOne(variantId);
+  }
+
+  updateVariant(variant: ProductVariant) {
+    return this.productVariantsService.saveProductVariant(variant);
   }
 
   async findByCategoryId(
@@ -198,7 +226,7 @@ export class ProductsService {
         'promotion',
       ],
       skip: offset,
-      take,
+      take: take,
     });
   }
 
@@ -207,10 +235,17 @@ export class ProductsService {
     updateProductDto: UpdateProductDto,
   ): Promise<Product> {
     await this.productsRepository.update(id, updateProductDto);
-    return this.findOne(id);
+    return this.findOneProd(id);
   }
 
   async remove(id: number): Promise<void> {
     await this.productsRepository.delete(id);
+  }
+
+  async removePromotionFromProduct(promotion: Promotion): Promise<void> {
+    await this.productsRepository.update(
+      { promotion: promotion },
+      { promotion: null },
+    );
   }
 }

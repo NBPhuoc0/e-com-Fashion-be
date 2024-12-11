@@ -20,7 +20,4 @@ export class ProductVariantSizeStock {
 
   @Column()
   xxl: number;
-
-  @OneToOne(() => ProductVariant, (variant) => variant.variantId)
-  variantId: number;
 }

@@ -22,13 +22,15 @@ export class ProductVariant {
   @Column()
   variantHex: string;
 
-  @OneToOne(() => ProductVariantSizeStock, (ss) => ss.variantId, {
+  @OneToOne(() => ProductVariantSizeStock, {
     cascade: true,
   })
   @JoinColumn({})
   sizeStockQuantity: ProductVariantSizeStock;
 
-  @ManyToOne(() => Product, (product) => product.variants)
+  @ManyToOne(() => Product, (product) => product.variants, {
+    createForeignKeyConstraints: false,
+  })
   product: Product;
 
   @OneToMany(() => Photo, (photo) => photo.productVariant, { cascade: true })

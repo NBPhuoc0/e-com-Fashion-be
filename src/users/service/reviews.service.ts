@@ -11,25 +11,17 @@ export class ReviewsService {
   constructor(
     @InjectRepository(Review)
     private reviewsRepository: Repository<Review>,
-    private productsService: ProductsService,
     private usersService: UsersService,
   ) {}
 
-  async create(createReviewDto: ReviewDto): Promise<Review> {
-    const review = this.reviewsRepository.create();
-    await this.productsService
-      .findOne(createReviewDto.productId)
-      .then((product) => {
-        if (!product) {
-          throw new NotFoundException('Product not found');
-        }
-        review.product = product;
-      });
-
-    review.user = createReviewDto.user;
-    review.rating = createReviewDto.rating;
-    review.comment = createReviewDto.comment;
-    return this.reviewsRepository.save(review);
+  create(createReviewDto: ReviewDto): Review {
+    const review = this.reviewsRepository.create(createReviewDto);
+    // review.product = createReviewDto.product;
+    // review.user = createReviewDto.user;
+    // review.rating = createReviewDto.rating;
+    // review.comment = createReviewDto.comment;
+    // return this.reviewsRepository.save(review);
+    return review;
   }
 
   findAll(): Promise<Review[]> {

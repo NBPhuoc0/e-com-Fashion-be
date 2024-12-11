@@ -7,6 +7,7 @@ import {
   Length,
   IsNumber,
 } from 'class-validator';
+import { Product } from 'src/entities/product.entity';
 import { User } from 'src/entities/user.entity';
 
 export class ReviewDto {
@@ -22,8 +23,6 @@ export class ReviewDto {
   @Length(1, 500)
   comment: string;
 
-  @IsDate()
-  createdAt: Date;
-
   user: User;
+  product: Product;
 }

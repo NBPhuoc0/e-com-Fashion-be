@@ -1,9 +1,9 @@
-import { IsNumber, IsString, IsDate } from 'class-validator';
-import { Order } from 'src/entities/order.entity';
+import { PaymentMethod, PaymentStatus } from 'src/common/common.e';
 
 export class PaymentDto {
-  order: Order;
-  paymentMethod: string;
-  paymentStatus: string;
+  paymentMethod: PaymentMethod;
+  paymentAmount: number;
+  paymentReference: string;
+  paymentStatus: PaymentStatus;
   paymentDate: Date;
 }

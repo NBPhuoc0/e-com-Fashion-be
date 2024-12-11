@@ -6,15 +6,16 @@ import {
   InternalServerErrorException,
   Get,
   Query,
+  UseInterceptors,
+  UploadedFiles,
+  Param,
+  Logger,
 } from '@nestjs/common';
 import { ProductsService } from './service/products.service';
 import { ProductDto } from './dto/product.dto';
 import { CategoriesService } from './service/product-categories.service';
-import { ProductVariantsService } from './service/product-variants.service';
-import { S3ClientService } from '../common/s3-client/s3-client.service';
 import { ApiTags } from '@nestjs/swagger';
 import { CategoryDto } from './dto/category.dto';
-import { QueryFailedError } from 'typeorm';
 
 @Controller('products')
 @ApiTags('products')
@@ -22,9 +23,9 @@ export class ProductsController {
   constructor(
     private readonly productsService: ProductsService,
     private readonly categoriesService: CategoriesService,
-    private readonly productVariantsService: ProductVariantsService,
-    private readonly s3ClientService: S3ClientService,
   ) {}
+
+  logger = new Logger('ProductsController');
 
   @Post()
   create(@Body() createProductDto: ProductDto) {
@@ -32,8 +33,8 @@ export class ProductsController {
   }
 
   @Get('products')
-  findAll() {
-    return this.productsService.findAll();
+  findAll(@Query('page') page: number, @Query('skip') skip: number) {
+    return this.productsService.findAll(page, skip);
   }
 
   @Post('categories')
@@ -46,8 +47,13 @@ export class ProductsController {
     return this.categoriesService.findAll();
   }
 
+  @Get('categories/tree')
+  findTree() {
+    return this.categoriesService.findTree();
+  }
+
   @Get('categories/:id')
-  findOneCategory(@Query('id') id: number) {
-    return this.categoriesService.getParent(id);
+  findCategory(@Param('id') id: number) {
+    return this.categoriesService.findOne(id);
   }
 }

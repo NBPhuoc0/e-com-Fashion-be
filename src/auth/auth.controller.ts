@@ -9,6 +9,7 @@ import {
   Res,
   UseGuards,
   Req,
+  Logger,
 } from '@nestjs/common';
 import { HttpStatus } from '@nestjs/common';
 import { AuthService } from './auth.service';
@@ -21,7 +22,6 @@ import {
   TokenPayload,
 } from 'src/common/interface';
 import { Response } from 'express';
-import { User } from 'src/entities/user.entity';
 import { AuthGuard } from '@nestjs/passport';
 
 @Controller('auth')
@@ -29,11 +29,10 @@ import { AuthGuard } from '@nestjs/passport';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
+  private logger = new Logger(AuthController.name);
+
   @Post('signin')
   @ApiOperation({ summary: 'signin' })
-  @ApiResponse({ status: 200, description: 'signin successful' })
-  @ApiResponse({ status: 401, description: 'Invalid credentials' })
-  @ApiResponse({ status: 500, description: 'Internal server error' })
   async signin(
     @Body() signinDto: signinDto,
     @Res() res: Response,
@@ -54,28 +53,19 @@ export class AuthController {
       sameSite: 'strict',
       maxAge: 30 * 24 * 60 * 60 * 1000,
     });
-    return res.status(HttpStatus.OK).json(rs.user);
+    return res.json(rs.user);
   }
 
   @Post('signup')
   @ApiOperation({ summary: 'signup' })
-  @ApiResponse({ status: 200, description: 'signup successful' })
-  @ApiResponse({ status: 401, description: 'Invalid credentials' })
-  @ApiResponse({ status: 500, description: 'Internal server error' })
-  async signup(
-    @Body() signupDto: signupDto,
-    @Res() res: Response,
-  ): Promise<Response> {
+  async signup(@Body() signupDto: signupDto) {
     await this.authService.signup(signupDto);
-    return res.sendStatus(HttpStatus.OK);
+    return { message: 'signup success' };
   }
 
   @UseGuards(AuthGuard('jwt'))
   @Post('signout')
   @ApiOperation({ summary: 'signout' })
-  @ApiResponse({ status: 200, description: 'signout successful' })
-  @ApiResponse({ status: 401, description: 'Invalid credentials' })
-  @ApiResponse({ status: 500, description: 'Internal server error' })
   async signout(
     @Res() res: Response,
     @Req() req: RequestWithUser,
@@ -83,23 +73,21 @@ export class AuthController {
     await this.authService.signout(req.user.userId);
     res.clearCookie('refreshToken');
     res.clearCookie('accessToken');
-    return res.sendStatus(HttpStatus.OK);
+    return res.json({ message: 'signout success' });
   }
 
   @UseGuards(AuthGuard('jwt-refresh'))
   @Post('refresh')
   @ApiOperation({ summary: 'refresh' })
-  @ApiResponse({ status: 200, description: 'refresh successful' })
-  @ApiResponse({ status: 401, description: 'Invalid credentials' })
-  @ApiResponse({ status: 500, description: 'Internal server error' })
   async refresh(
     @Req() req: RequestWithRefreshToken,
     @Res() res: Response,
   ): Promise<Response> {
     const token = await this.authService.refreshToken(
-      req.payload.refreshToken,
-      req.payload.userId,
+      req.user.refreshToken,
+      req.user.userId,
     );
+    // this.logger.log(token);
     res.cookie('refreshToken', token.refreshToken, {
       httpOnly: true,
       secure: true,
@@ -112,6 +100,6 @@ export class AuthController {
       sameSite: 'strict',
       maxAge: 30 * 24 * 60 * 60 * 1000,
     });
-    return res.sendStatus(HttpStatus.OK);
+    return res.json({ message: 'refresh success' });
   }
 }

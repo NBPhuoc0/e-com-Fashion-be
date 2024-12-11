@@ -10,7 +10,7 @@ import {
 import { Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 
-export class promotionDto {
+export class PromotionDto {
   @IsString()
   @ApiProperty({
     example: 'Summer Sale',

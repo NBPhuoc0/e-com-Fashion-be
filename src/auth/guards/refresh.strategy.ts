@@ -13,6 +13,7 @@ export class RefreshTokenStrategy extends PassportStrategy(
   constructor() {
     super({
       jwtFromRequest: cookieExtractorRefresh,
+      ignoreExpiration: false,
       secretOrKey: process.env.JWT_REFRESH_SECRET,
       passReqToCallback: true,
     });

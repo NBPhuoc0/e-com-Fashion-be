@@ -16,6 +16,6 @@ import { OrdersModule } from 'src/orders/orders.module';
   ],
   controllers: [UsersController],
   providers: [UsersService, ReviewsService],
-  exports: [UsersService, ReviewsService, TypeOrmModule],
+  exports: [UsersService, ReviewsService],
 })
 export class UsersModule {}

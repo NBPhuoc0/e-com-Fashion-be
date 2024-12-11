@@ -11,9 +11,8 @@ export class OrderDetailService {
     private orderDetailsRepository: Repository<OrderDetail>,
   ) {}
 
-  async create(dto: OrderDetailDto): Promise<OrderDetail> {
-    const orderDetail = this.orderDetailsRepository.create(dto);
-    return this.orderDetailsRepository.save(orderDetail);
+  create(dto: OrderDetailDto): OrderDetail {
+    return this.orderDetailsRepository.create(dto);
   }
 
   async findAll(): Promise<OrderDetail[]> {

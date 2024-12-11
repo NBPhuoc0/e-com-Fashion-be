@@ -13,7 +13,7 @@ export class Review {
   @PrimaryGeneratedColumn()
   reviewId: number;
 
-  @ManyToOne(() => Product, (product) => product.reviews)
+  @ManyToOne(() => Product, (product) => product.reviews, { cascade: true })
   product: Product;
 
   @ManyToOne(() => User, (user) => user.reviews)

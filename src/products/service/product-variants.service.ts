@@ -4,8 +4,10 @@ import { Repository } from 'typeorm';
 import { ProductVariant } from '../../entities/product-variant.entity';
 import { ProductVariantDto } from '../dto/product-variant.dto';
 import { ProductVariantSizeStock } from 'src/entities/product-variant-size-stock.entity';
-import { ProductSize } from 'src/common/enum';
+import { ProductSize } from 'src/common/common.e';
 import { log } from 'console';
+import { Photo } from 'src/entities/photo.entity';
+import { PhotoDto } from '../dto/photo.dto';
 
 @Injectable()
 export class ProductVariantsService {
@@ -50,6 +52,10 @@ export class ProductVariantsService {
 
     return variant;
     // return this.productVariantsRepository.save(variant);
+  }
+
+  async saveProductVariant(variant: ProductVariant): Promise<ProductVariant> {
+    return await this.productVariantsRepository.save(variant);
   }
 
   findAll(): Promise<ProductVariant[]> {

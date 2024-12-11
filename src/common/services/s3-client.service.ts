@@ -16,7 +16,7 @@ import { ConfigService } from '@nestjs/config';
 export class S3ClientService {
   private logger = new Logger('S3ClientService');
   private client: S3Client;
-  private bucketName = this.configService.get('S3_BUCKET');
+  private bucketName = this.configService.get('S3_BUC KET');
   constructor(private readonly configService: ConfigService) {
     const s3_region = this.configService.get('S3_REGION');
 
@@ -50,5 +50,22 @@ export class S3ClientService {
     } catch (error) {
       throw new InternalServerErrorException(error);
     }
+  }
+
+  uploadFileToPublicBucket(path: string, file: Express.Multer.File): string {
+    const bucket_name = this.bucketName;
+    const key = `products/${path}`;
+    this.client.send(
+      new PutObjectCommand({
+        Bucket: bucket_name,
+        Key: key,
+        Body: file.buffer,
+        ContentType: file.mimetype,
+        ACL: 'public-read',
+        ContentLength: file.size, // calculate length of buffer
+      }),
+    );
+
+    return `https://${bucket_name}.s3.ap-southeast-1.amazonaws.com/${key}`;
   }
 }

@@ -1,5 +1,6 @@
 import { VoucherType } from 'src/common/interface';
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Order } from './order.entity';
 
 @Entity()
 export class Voucher {
@@ -24,6 +25,12 @@ export class Voucher {
   voucherEndDate: Date;
 
   @Column()
+  usageLimit: number;
+
+  @Column({ default: 0 })
+  usageCount: number;
+
+  @Column({ default: true })
   voucherStatus: boolean;
 
   @Column({

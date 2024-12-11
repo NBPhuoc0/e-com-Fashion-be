@@ -11,7 +11,7 @@ import {
 import { Order } from './order.entity';
 import { Review } from './review.entity';
 import { Cart } from './cart.entity';
-import { Role, Gender } from '../common/enum';
+import { Role, Gender } from '../common/common.e';
 
 @Entity()
 export class User {
@@ -57,7 +57,9 @@ export class User {
   @OneToMany(() => Review, (review) => review.user, { cascade: true })
   reviews: Review[];
 
-  @OneToOne(() => Cart, (cart) => cart.user, { cascade: true })
+  @OneToOne(() => Cart, (cart) => cart.user, {
+    cascade: true,
+  })
   @JoinColumn()
   carts: Cart;
 }

@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from 'src/entities/user.entity';
@@ -6,6 +6,7 @@ import { Cart } from 'src/entities/cart.entity';
 import { CartItem } from 'src/entities/cart-item.entity';
 import { signupDto } from 'src/auth/dto/signup.dto';
 import { UpdateUserDto } from '../dto/update-user.dto';
+import { ProductVariant } from 'src/entities/product-variant.entity';
 
 @Injectable()
 export class UsersService {
@@ -22,11 +23,10 @@ export class UsersService {
   //* */ User CRUD operations
   async createUser(createUserDto: signupDto): Promise<User> {
     const user = this.userRepository.create(createUserDto);
+    user.carts = this.cartRepository.create();
+    user.carts.cartItems = [];
+    user.reviews = [];
     await this.userRepository.save(user);
-    const cart = this.cartRepository.create({
-      user: user,
-    });
-    this.cartRepository.save(cart);
     return user;
   }
 
@@ -35,19 +35,40 @@ export class UsersService {
   }
 
   async findOneUser(id: number): Promise<User> {
-    return this.userRepository.findOne({ where: { userId: id } });
+    return this.userRepository.findOne({
+      where: { userId: id },
+      relations: ['carts', 'carts.cartItems', 'carts.cartItems.productVariant'],
+      select: [
+        'userId',
+        'fullName',
+        'email',
+        'address',
+        'phoneNumber',
+        'carts',
+        'dateOfBirth',
+        'gender',
+      ],
+    });
   }
 
   async findUserByEmail(email: string): Promise<User> {
-    return this.userRepository.findOne({ where: { email } });
+    return this.userRepository.findOne({
+      where: { email },
+      relations: ['carts'],
+    });
   }
 
-  async updateUser(
+  async updateUserProfile(
     id: number,
     updateUserDto: Partial<UpdateUserDto>,
   ): Promise<User> {
     await this.userRepository.update({ userId: id }, updateUserDto);
     return this.findOneUser(id);
+  }
+
+  async updateUser(user: User): Promise<User> {
+    await this.userRepository.save(user);
+    return user;
   }
 
   async removeUser(id: number): Promise<void> {
@@ -60,30 +81,19 @@ export class UsersService {
     return this.cartRepository.find();
   }
 
-  async findCartByUserId(userId: number): Promise<Cart> {
-    return this.cartRepository.findOne({ where: { user: { userId } } });
-  }
-
   async updateCart(
-    userId: number,
-    productVariantId: number,
+    user: User,
+    productVariant: ProductVariant,
     quantity: number,
   ): Promise<CartItem | void> {
     if (quantity === 0) {
-      throw new Error('Quantity must be a non-zero integer');
+      throw new BadRequestException('Quantity must be a non-zero integer');
     }
 
-    let cart = await this.findCartByUserId(userId);
-    if (!cart) {
-      cart = this.cartRepository.create({
-        user: { userId },
-      });
-      await this.cartRepository.save(cart);
-    }
-
+    const cart = user.carts;
     const cartItem = await this.cartItemRepository.findOne({
       where: {
-        productVariant: { variantId: productVariantId },
+        productVariant: productVariant,
         cart: { cartId: cart.cartId },
       },
     });
@@ -93,7 +103,7 @@ export class UsersService {
       cartItem.quantity += quantity;
       if (cartItem.quantity <= 0) {
         // Remove item if quantity is zero or negative
-        await this.cartItemRepository.delete(cartItem.cartItemId);
+        await this.cartItemRepository.remove(cartItem);
         return;
       }
       return this.cartItemRepository.save(cartItem);
@@ -101,13 +111,15 @@ export class UsersService {
       // Add new cart item
 
       const newCartItem = this.cartItemRepository.create({
-        productVariant: { variantId: productVariantId },
+        productVariant: productVariant,
         cart: cart,
         quantity: quantity,
       });
       return this.cartItemRepository.save(newCartItem);
     } else {
-      throw new Error('Cannot remove non-existing item from cart');
+      throw new BadRequestException(
+        'Cannot remove non-existing item from cart',
+      );
     }
   }
 }

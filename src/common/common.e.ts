@@ -25,23 +25,23 @@ export enum ProductSize {
 }
 
 export enum PaymentMethod {
-  COD = 'COD',
-  VNPAY = 'VNPAY',
+  COD = 'cod',
+  BANKING = 'banking',
 }
 
-export enum OrderStatus {
+export enum PaymentStatus {
   PENDING = 'pending',
-  PROCESSING = 'processing',
-  DELIVERING = 'delivering',
   COMPLETED = 'completed',
   CANCELLED = 'cancelled',
 }
 
-export enum ReviewStatus {
-  PENDING = 'pending',
-  APPROVED = 'approved',
-  REJECTED = 'rejected',
+export enum OrderStatus {
+  PENDINGPAYMENT = 'pending payment',
+  PROCESSING = 'processing',
+  COMPLETED = 'completed',
+  CANCELLED = 'cancelled',
 }
+
 
 export enum S3Bucket {
   PRODUCT = 'product',

@@ -31,9 +31,6 @@ export class Product {
   @Column()
   description: string;
 
-  @Column('decimal')
-  price: number;
-
   @Column({
     default: 0,
   })
@@ -50,8 +47,12 @@ export class Product {
   @OneToMany(() => Review, (review) => review.product, { cascade: true })
   reviews: Review[];
 
+  @Column('decimal')
+  price: number;
+
   @Column({
     nullable: true,
+    type: 'decimal',
   })
   promotionPrice: number;
 
