@@ -57,7 +57,7 @@ export class UsersController {
   @Patch('update/cart')
   async updateCart(@Req() req: RequestWithUser, @Body() cart: CartItemDto) {
     const user = await this.usersService.findOneUser(req.user.userId);
-    const variant = await this.productsService.findVariantById(
+    const variant = await this.productsService.findVariantByIdWithProd(
       cart.productVariantId,
     );
     if (!variant) {
@@ -70,10 +70,5 @@ export class UsersController {
   async getCart(@Req() req: RequestWithUser) {
     const user = await this.usersService.findOneUser(req.user.userId);
     return user.carts;
-  }
-
-  @Get('test')
-  test(@Req() req: RequestWithUser) {
-    return req.user;
   }
 }

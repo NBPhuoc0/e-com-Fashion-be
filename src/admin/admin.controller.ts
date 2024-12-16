@@ -13,7 +13,7 @@ import {
   InternalServerErrorException,
   Query,
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiProperty, ApiTags } from '@nestjs/swagger';
 import { ProductsService } from 'src/products/service/products.service';
 import { CategoriesService } from 'src/products/service/product-categories.service';
 import { S3ClientService } from 'src/common/services/s3-client.service';
@@ -27,6 +27,9 @@ import { FilesInterceptor } from '@nestjs/platform-express';
 import { VoucherDto } from 'src/promotion/dto/voucher.dto';
 import { OrdersService } from 'src/orders/service/orders.service';
 import { UsersService } from 'src/users/service/users.service';
+import { PagingDto } from 'src/products/dto/paging.dto';
+import { MonthlyDto } from './dto/monthly.dto';
+import { OrderDetailService } from 'src/orders/service/order-detail.service';
 
 @Controller('admin')
 @ApiTags('admin')
@@ -37,6 +40,7 @@ export class AdminController {
     private readonly promtionService: PromotionsService,
     private readonly vouchersService: VouchersService,
     private readonly ordersService: OrdersService,
+    private readonly orderDetailService: OrderDetailService,
     private readonly usersService: UsersService,
     private readonly s3ClientService: S3ClientService,
   ) {}
@@ -60,10 +64,12 @@ export class AdminController {
     @UploadedFiles() files: Express.Multer.File[],
     @Param('id') id: number,
   ) {
-    const variant = await this.productsService.findVariantById(id);
+    // this.logger.log('Upload product image ' + files);
+    const variant = await this.productsService.findVariantByIdWithProd(id);
     if (!variant) {
       throw new NotFoundException('Variant not found');
     }
+    // return variant;
     try {
       const imgUrls = files.map((photo, i) => {
         return this.s3ClientService.uploadFileToPublicBucket(
@@ -71,6 +77,7 @@ export class AdminController {
           photo,
         );
       });
+      // this.logger.log('Image urls ' + imgUrls);
       return this.productsService.updatePhotoVariant(variant, imgUrls);
     } catch (error) {
       throw new InternalServerErrorException('Error uploading image');
@@ -83,8 +90,8 @@ export class AdminController {
   }
 
   @Get('products')
-  findAll(@Query('page') page: number, @Query('skip') skip: number) {
-    return this.productsService.findAll(page, skip);
+  findAll(@Query() dto: PagingDto) {
+    return this.productsService.findAll(dto.page, dto.skip);
   }
 
   //* CATEGORIES
@@ -204,12 +211,42 @@ export class AdminController {
   //* ORDERS
   @Get('orders')
   getOrders() {
+    this.logger.log('Get all orders');
     return this.ordersService.findAll();
+  }
+
+  @Get('orders/:id')
+  async getOrder(@Param('id') id: number) {
+    const order = await this.ordersService.findOne(id);
+    if (!order) {
+      throw new NotFoundException('Order not found');
+    }
+    return order;
   }
 
   //* USERS
   @Get('users')
   getUsers() {
+    this.logger.log('Get all users');
     return this.usersService.findAllUsers();
+  }
+
+  //* DASHBOAR - STATISTICS - REVENUE
+  @Post('statistics/monthlyrevenue')
+  getMothlyRevenue(@Body() dto: MonthlyDto) {
+    this.logger.log('Get monthly revenue');
+    return this.ordersService.getMonthlyRevenue(2024, 10);
+  }
+
+  @Get('statistics/topcategories')
+  getOrdersRevenue() {
+    this.logger.log('Get top categories');
+    return this.orderDetailService.getRevenueByCategory();
+  }
+
+  @Get('statistics/topproducts')
+  getTopProducts() {
+    this.logger.log('Get top products');
+    return this.orderDetailService.getTopSellingProducts();
   }
 }

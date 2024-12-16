@@ -17,13 +17,16 @@ export class OrderDetail {
   order: Order;
 
   @ManyToOne(() => ProductVariant, {
-    createForeignKeyConstraints: false,
+    createForeignKeyConstraints: true,
   })
   @JoinColumn()
   productVariant: ProductVariant;
 
   @Column()
   productId: number;
+
+  @Column()
+  productName: string;
 
   @Column('decimal')
   price: number;

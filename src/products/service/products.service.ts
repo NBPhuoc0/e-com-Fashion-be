@@ -4,7 +4,7 @@ import {
   Logger,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Between, In, Repository } from 'typeorm';
+import { Between, In, Like, Repository } from 'typeorm';
 import { Product } from '../../entities/product.entity';
 import { ProductDto } from '../dto/product.dto';
 import { ProductVariantsService } from './product-variants.service';
@@ -15,6 +15,7 @@ import { PhotoDto } from '../dto/photo.dto';
 import { Promotion } from 'src/entities/promotion.entity';
 import { ProductVariant } from 'src/entities/product-variant.entity';
 import { Photo } from 'src/entities/photo.entity';
+import { ListProductDto } from '../dto/list-product.dto';
 
 @Injectable()
 export class ProductsService {
@@ -82,10 +83,13 @@ export class ProductsService {
     return await this.productVariantsService.saveProductVariant(variant);
   }
 
-  findAll(page: number = 0, skip: number = 24): Promise<Product[]> {
-    const take = skip;
-    const offset = page * skip;
-    return this.productsRepository.find({
+  async findAll(
+    page: number,
+    skip: number,
+  ): Promise<{ data: Product[]; count: number }> {
+    const take = skip || 24;
+    const offset = take * (page || 0);
+    const [data, count] = await this.productsRepository.findAndCount({
       relations: [
         'variants',
         'variants.sizeStockQuantity',
@@ -95,6 +99,10 @@ export class ProductsService {
       skip: offset,
       take,
     });
+    return {
+      data,
+      count,
+    };
   }
 
   findOneProd(id: number): Promise<Product> {
@@ -113,22 +121,27 @@ export class ProductsService {
     return this.productVariantsService.findOne(variantId);
   }
 
+  findVariantByIdWithProd(variantId: number): Promise<ProductVariant> {
+    return this.productVariantsService.findOneWithProduct(variantId);
+  }
+
   updateVariant(variant: ProductVariant) {
     return this.productVariantsService.saveProductVariant(variant);
   }
 
   async findByCategoryId(
     categoryId: number,
-    page: number = 0,
-    skip: number = 24,
+    page: number,
+    skip: number,
     priceOption?: number,
     order?: string,
-  ): Promise<Product[]> {
-    const take = skip;
-    const offset = page * skip;
+  ): Promise<ListProductDto> {
+    const take = skip || 24;
+    const offset = take * (page || 0);
     let minPrice = 0;
     let maxPrice = 10000000;
     order = order || 'ASC';
+
     switch (priceOption) {
       case 1:
         maxPrice = 150000;
@@ -141,8 +154,14 @@ export class ProductsService {
         minPrice = 300000;
         break;
     }
-    return this.productsRepository.find({
-      where: { category: { categoryId }, price: Between(minPrice, maxPrice) },
+
+    const descestors = await this.categoriesService.findDescendants(categoryId);
+
+    const [data, count] = await this.productsRepository.findAndCount({
+      where: {
+        category: { categoryId: In(descestors) },
+        price: Between(minPrice, maxPrice),
+      },
       relations: [
         'variants',
         'variants.sizeStockQuantity',
@@ -153,17 +172,19 @@ export class ProductsService {
       order: order === 'ASC' ? { price: 'ASC' } : { price: 'DESC' },
       take: take,
     });
+
+    return { data, count };
   }
 
   async findByProductName(
     productName: string,
-    page: number = 0,
-    skip: number = 24,
+    page: number,
+    skip: number,
     priceOption?: number,
     order?: string,
-  ): Promise<Product[]> {
-    const take = skip;
-    const offset = page * skip;
+  ): Promise<ListProductDto> {
+    const take = skip || 24;
+    const offset = take * (page || 0);
     let minPrice = 0;
     let maxPrice = 10000000;
     order = order || 'ASC';
@@ -179,8 +200,11 @@ export class ProductsService {
         minPrice = 300000;
         break;
     }
-    return this.productsRepository.find({
-      where: { productName: productName, price: Between(minPrice, maxPrice) },
+    const [data, count] = await this.productsRepository.findAndCount({
+      where: {
+        productName: Like(productName),
+        price: Between(minPrice, maxPrice),
+      },
       relations: [
         'variants',
         'variants.sizeStockQuantity',
@@ -191,17 +215,18 @@ export class ProductsService {
       take: take,
       order: order === 'ASC' ? { price: 'ASC' } : { price: 'DESC' },
     });
+    return { data, count };
   }
 
   async findByPromotionId(
     promotionId: number,
-    page: number = 0,
-    skip: number = 24,
+    page: number,
+    skip: number,
     priceOption?: number,
     order?: string,
-  ): Promise<Product[]> {
-    const take = skip;
-    const offset = page * skip;
+  ): Promise<ListProductDto> {
+    const take = skip || 24;
+    const offset = take * (page || 0);
     let minPrice = 0;
     let maxPrice = 10000000;
     order = order || 'ASC';
@@ -217,8 +242,9 @@ export class ProductsService {
         minPrice = 300000;
         break;
     }
-    return this.productsRepository.find({
-      where: { promotion: { promotionId } },
+
+    const [data, count] = await this.productsRepository.findAndCount({
+      where: { promotion: { promotionId }, price: Between(minPrice, maxPrice) },
       relations: [
         'variants',
         'variants.sizeStockQuantity',
@@ -228,6 +254,7 @@ export class ProductsService {
       skip: offset,
       take: take,
     });
+    return { data, count };
   }
 
   async update(

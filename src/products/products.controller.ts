@@ -16,6 +16,7 @@ import { ProductDto } from './dto/product.dto';
 import { CategoriesService } from './service/product-categories.service';
 import { ApiTags } from '@nestjs/swagger';
 import { CategoryDto } from './dto/category.dto';
+import { PagingDto } from './dto/paging.dto';
 
 @Controller('products')
 @ApiTags('products')
@@ -27,33 +28,55 @@ export class ProductsController {
 
   logger = new Logger('ProductsController');
 
-  @Post()
-  create(@Body() createProductDto: ProductDto) {
-    return this.productsService.create(createProductDto);
+  @Get('all')
+  findAll(@Query() dto: PagingDto) {
+    return this.productsService.findAll(dto.page, dto.skip);
   }
 
-  @Get('products')
-  findAll(@Query('page') page: number, @Query('skip') skip: number) {
-    return this.productsService.findAll(page, skip);
+  @Get(':id')
+  findOne(@Param('id') id: number) {
+    return this.productsService.findOneProd(+id);
   }
 
-  @Post('categories')
-  createCategory(@Body() createCategoryDto: CategoryDto) {
-    return this.categoriesService.create(createCategoryDto);
-  }
-
-  @Get('categories')
-  findAllCategories() {
-    return this.categoriesService.findAll();
-  }
-
-  @Get('categories/tree')
-  findTree() {
-    return this.categoriesService.findTree();
+  @Get('ansestors/:id')
+  finAnsestors(@Param('id') id: number) {
+    return this.categoriesService.findAncestors(+id);
   }
 
   @Get('categories/:id')
-  findCategory(@Param('id') id: number) {
-    return this.categoriesService.findOne(id);
+  findAllProductWithCategories(
+    @Query() dto: PagingDto,
+    @Param('id') categoryId: number,
+  ) {
+    return this.productsService.findByCategoryId(
+      categoryId,
+      +dto.page,
+      +dto.skip,
+      +dto.priceOption,
+      dto.order,
+    );
+  }
+
+  @Get('promotions/:id')
+  findAllProductWithPromotions(
+    @Query() dto: PagingDto,
+    @Param('id') promotionId: number,
+  ) {
+    return this.productsService.findByPromotionId(
+      promotionId,
+      dto.page,
+      dto.skip,
+      dto.priceOption,
+      dto.order,
+    );
+  }
+
+  @Get('search')
+  findByNames(@Query() dto: PagingDto) {
+    return this.productsService.findByProductName(
+      dto.keyword,
+      dto.page,
+      dto.skip,
+    );
   }
 }

@@ -44,6 +44,22 @@ export class CategoriesService {
     return this.categoriesRepository.find();
   }
 
+  async findAncestors(id: number): Promise<number[]> {
+    const category = await this.findOne(id);
+    const ansestors = await this.dataSource
+      .getTreeRepository(ProductCategory)
+      .findAncestors(category);
+    return ansestors.map((c) => c.categoryId);
+  }
+
+  async findDescendants(id: number): Promise<number[]> {
+    const category = await this.findOne(id);
+    const descendants = await this.dataSource
+      .getTreeRepository(ProductCategory)
+      .findDescendants(category);
+    return descendants.map((c) => c.categoryId);
+  }
+
   findOne(id: number): Promise<ProductCategory> {
     return this.categoriesRepository.findOneBy({ categoryId: id });
   }

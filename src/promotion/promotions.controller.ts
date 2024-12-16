@@ -16,18 +16,4 @@ import { ApiBody, ApiTags } from '@nestjs/swagger';
 export class PromotionsController {
   constructor(private readonly promotionsService: PromotionsService) {}
 
-  @Post()
-  create(@Body() dto: PromotionDto) {
-    return this.promotionsService.createPromotion(dto);
-  }
-
-  @Get()
-  findAll() {
-    return this.promotionsService.getPromotions();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.promotionsService.getPromotionWithProdsById(+id);
-  }
 }

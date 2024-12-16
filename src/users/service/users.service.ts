@@ -112,6 +112,10 @@ export class UsersService {
 
       const newCartItem = this.cartItemRepository.create({
         productVariant: productVariant,
+        productId: productVariant.product.productId,
+        productName: productVariant.product.productName,
+        price: productVariant.product.price,
+        promotionPrice: productVariant.product.promotionPrice,
         cart: cart,
         quantity: quantity,
       });

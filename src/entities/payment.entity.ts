@@ -29,6 +29,7 @@ export class Payment {
   @Column({
     type: 'enum',
     enum: PaymentStatus,
+    default: PaymentStatus.PENDING,
   })
   paymentStatus: PaymentStatus;
 

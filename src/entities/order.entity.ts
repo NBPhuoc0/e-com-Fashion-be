@@ -26,7 +26,7 @@ export class Order {
   @Column({ type: 'enum', enum: OrderStatus, default: OrderStatus.PROCESSING })
   orderStatus: OrderStatus;
 
-  @Column('decimal')
+  @Column('decimal', { default: 50000 })
   shippingFee: number;
 
   @Column('decimal')

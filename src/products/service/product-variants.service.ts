@@ -66,6 +66,13 @@ export class ProductVariantsService {
     return this.productVariantsRepository.findOneBy({ variantId: id });
   }
 
+  findOneWithProduct(id: number): Promise<ProductVariant> {
+    return this.productVariantsRepository.findOne({
+      where: { variantId: id },
+      relations: ['product'],
+    });
+  }
+
   async remove(id: number): Promise<void> {
     await this.productVariantsRepository.delete(id);
   }

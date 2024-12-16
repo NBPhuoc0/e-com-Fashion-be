@@ -17,8 +17,11 @@ async function bootstrap() {
     new ValidationPipe({
       whitelist: false,
       transform: true,
-      forbidUnknownValues: true,
+      forbidUnknownValues: false,
       forbidNonWhitelisted: false,
+      transformOptions: {
+        enableImplicitConversion: true, // <- This line here
+      },
       validationError: {
         target: true,
         value: true,
@@ -27,7 +30,8 @@ async function bootstrap() {
   );
   app.use(cookieParser());
 
-  app.useGlobalFilters(new HttpExceptionFilter(), new TypeORMExceptionFilter());
+  app.useGlobalFilters(new HttpExceptionFilter());
+  app.useGlobalFilters(new TypeORMExceptionFilter());
 
   const logger = new Logger('Main');
 

@@ -16,7 +16,7 @@ import { ConfigService } from '@nestjs/config';
 export class S3ClientService {
   private logger = new Logger('S3ClientService');
   private client: S3Client;
-  private bucketName = this.configService.get('S3_BUC KET');
+  private bucketName = 'fstore-nbphuoc';
   constructor(private readonly configService: ConfigService) {
     const s3_region = this.configService.get('S3_REGION');
 

@@ -20,10 +20,8 @@ export class OrderDto {
   @IsEnum(PaymentMethod)
   paymentMethod: PaymentMethod;
 
-  @IsArray()
-  @ValidateNested({ each: true })
-  @Type(() => OrderDetailDto)
-  orderDetails: OrderDetailDto[];
+  @IsString()
+  voucherCode: string;
 
   user: User;
 }

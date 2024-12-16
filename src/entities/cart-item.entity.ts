@@ -25,6 +25,9 @@ export class CartItem {
   @Column()
   productId: number;
 
+  @Column()
+  productName: string;
+
   @Column('decimal')
   price: number;
 

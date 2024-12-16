@@ -1,9 +1,11 @@
 import { PaymentMethod, PaymentStatus } from 'src/common/common.e';
+import { Order } from 'src/entities/order.entity';
 
 export class PaymentDto {
-  paymentMethod: PaymentMethod;
+  constructor(paymentAmount?: number, order?: Order) {
+    this.paymentAmount = paymentAmount ? paymentAmount : 0;
+    this.order = order ? order : null;
+  }
   paymentAmount: number;
-  paymentReference: string;
-  paymentStatus: PaymentStatus;
-  paymentDate: Date;
+  order: Order;
 }

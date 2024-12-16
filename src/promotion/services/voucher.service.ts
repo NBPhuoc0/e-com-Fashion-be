@@ -26,6 +26,10 @@ export class VouchersService {
     return this.voucherRepository.findOneBy({ voucherId });
   }
 
+  async findOneByCode(voucherCode: string): Promise<Voucher> {
+    return this.voucherRepository.findOneBy({ voucherCode });
+  }
+
   async updateVoucherStatus(voucherId: number): Promise<Voucher> {
     const voucher = await this.voucherRepository.findOneBy({ voucherId });
     voucher.voucherStatus = !voucher.voucherStatus;
