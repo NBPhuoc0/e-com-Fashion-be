@@ -54,7 +54,10 @@ export class AuthController {
       maxAge: 30 * 24 * 60 * 60 * 1000,
     });
 
-    return res.json(rs);
+    return res.json({
+      ...rs.user,
+      ...rs.token,
+    });
   }
 
   @Post('signup')
