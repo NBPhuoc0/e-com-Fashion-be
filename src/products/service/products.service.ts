@@ -106,7 +106,18 @@ export class ProductsService {
   }
 
   findOneProd(id: number): Promise<Product> {
-    return this.productsRepository.findOneBy({ productId: id });
+    return this.productsRepository.findOne({
+      where: {
+        productId: id,
+      },
+      relations: [
+        'variants',
+        'variants.sizeStockQuantity',
+        'variants.photos',
+        'category.parent',
+        'promotion',
+      ],
+    });
   }
 
   findProdsByIds(ids: number[]): Promise<Product[]> {
