@@ -55,6 +55,7 @@ export class AuthController {
     });
 
     return res.json({
+      id: rs.user.userId,
       ...rs.user,
       ...rs.token,
     });

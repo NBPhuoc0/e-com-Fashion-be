@@ -93,6 +93,7 @@ export class ProductsService {
       relations: [
         'variants',
         'variants.sizeStockQuantity',
+        'variants.photos',
         'category.parent',
         'promotion',
       ],
@@ -176,6 +177,7 @@ export class ProductsService {
       relations: [
         'variants',
         'variants.sizeStockQuantity',
+        'variants.photos',
         'category.parent',
         'promotion',
       ],
@@ -219,6 +221,7 @@ export class ProductsService {
       relations: [
         'variants',
         'variants.sizeStockQuantity',
+        'variants.photos',
         'category.parent',
         'promotion',
       ],
@@ -259,6 +262,7 @@ export class ProductsService {
       relations: [
         'variants',
         'variants.sizeStockQuantity',
+        'variants.photos',
         'category.parent',
         'promotion',
       ],
