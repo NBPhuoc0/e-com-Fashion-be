@@ -52,12 +52,12 @@ export class CategoriesService {
     return ansestors;
   }
 
-  async findDescendants(id: number): Promise<ProductCategory[]> {
+  async findDescendants(id: number): Promise<number[]> {
     const category = await this.findOne(id);
     const descendants = await this.dataSource
       .getTreeRepository(ProductCategory)
       .findDescendants(category);
-    return descendants;
+    return descendants.map((c) => c.categoryId);
   }
 
   findOne(id: number): Promise<ProductCategory> {
