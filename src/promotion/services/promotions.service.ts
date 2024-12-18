@@ -35,6 +35,10 @@ export class PromotionsService {
   async createPromotion(dto: PromotionDto): Promise<Promotion> {
     // Create and save the promotion entity
     const promotion = this.promotionRepository.create(dto);
+    promotion.promotionSlug =
+      promotion.promotionName.toLowerCase().replace(' ', '-') +
+      '-' +
+      promotion.promotionId;
     promotion.products = [];
 
     // Find and update products with the promotion

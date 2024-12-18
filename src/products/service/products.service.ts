@@ -296,7 +296,7 @@ export class ProductsService {
   async removePromotionFromProduct(promotion: Promotion): Promise<void> {
     await this.productsRepository.update(
       { promotion: promotion },
-      { promotion: null },
+      { promotion: null, promotionPrice: null },
     );
   }
 }
