@@ -88,6 +88,10 @@ export class PromotionsService {
     });
   }
 
+  async getPromotionWithOutProds(): Promise<Promotion[]> {
+    return this.promotionRepository.find();
+  }
+
   async getPromotionWithProdsById(id: number): Promise<Promotion> {
     return this.promotionRepository.findOne({
       where: { promotionId: id },

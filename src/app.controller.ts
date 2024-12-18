@@ -17,7 +17,7 @@ export class AppController {
   @Get('mega-menu')
   async getMegaMenu() {
     const cate = await this.categoriesService.findTree();
-    const promo = await this.promotionsService.getPromotions();
+    const promo = await this.promotionsService.getPromotionWithOutProds();
 
     return {
       categories: cate,
