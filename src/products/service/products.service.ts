@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Injectable,
   InternalServerErrorException,
   Logger,
@@ -106,8 +107,8 @@ export class ProductsService {
     };
   }
 
-  findOneProd(id: number): Promise<Product> {
-    return this.productsRepository.findOne({
+  async findOneProd(id: number): Promise<any> {
+    const prod = await this.productsRepository.findOne({
       where: {
         productId: id,
       },
@@ -119,6 +120,14 @@ export class ProductsService {
         'promotion',
       ],
     });
+
+    if (!prod) {
+      throw new BadRequestException('Product not found');
+    }
+    const listCategory = await this.categoriesService.findAncestors(
+      prod.category.categoryId,
+    );
+    return { ...prod, listCategory };
   }
 
   findProdsByIds(ids: number[]): Promise<Product[]> {
